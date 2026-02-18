@@ -779,8 +779,16 @@
             const section = document.getElementById(sectionId + '-section');
             if (section) section.classList.add('active');
 
-            // Active navigation
-            event.target.classList.add('active');
+            // Active navigation - find and activate the matching nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const linkText = link.textContent.toLowerCase();
+                if ((sectionId === 'catalog' && linkText.includes('cars')) ||
+                    (sectionId === 'requests' && linkText.includes('requests')) ||
+                    (sectionId === 'account' && linkText.includes('account'))) {
+                    link.classList.add('active');
+                }
+            });
 
             // Load data for specific sections
             if (sectionId === 'catalog') loadCatalog();

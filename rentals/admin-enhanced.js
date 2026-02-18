@@ -41,13 +41,40 @@ function renderAllBookings() {
     const pickups = JSON.parse(localStorage.getItem('veera-rentals-pickups') || '[]');
     const dropoffs = JSON.parse(localStorage.getItem('veera-rentals-dropoffs') || '[]');
     const swaps = JSON.parse(localStorage.getItem('veera-rentals-swaps') || '[]');
+    const requests = JSON.parse(localStorage.getItem('veera-rentals-requests') || '[]');
+    const fleet = JSON.parse(localStorage.getItem('fleet-data') || '[]');
+    const fleetMap = new Map(fleet.map(vehicle => [vehicle.id, vehicle]));
     
     const bookingsGrid = document.getElementById('bookings-grid');
     
     const allBookings = [
         ...pickups.map(b => ({ ...b, type: 'Pickup' })),
         ...dropoffs.map(b => ({ ...b, type: 'Drop-off' })),
-        ...swaps.map(b => ({ ...b, type: 'Swap' }))
+        ...swaps.map(b => ({ ...b, type: 'Swap' })),
+        ...requests.map(req => {
+            const vehicle = fleetMap.get(req.vehicleId) || {
+                make: 'Vehicle',
+                model: req.vehicleId || 'N/A',
+                rego: 'N/A'
+            };
+            const typeLabel = req.type ? (req.type.charAt(0).toUpperCase() + req.type.slice(1)) : 'Request';
+            return {
+                type: typeLabel,
+                serviceRef: req.id,
+                customerName: req.contactEmail || 'Guest Customer',
+                customerPhone: req.contactPhone || 'N/A',
+                contactEmail: req.contactEmail || '',
+                vehicle: vehicle,
+                mileage: req.currentMileage || 'N/A',
+                fuel: 'N/A',
+                timestamp: req.createdAt || new Date().toISOString(),
+                location: null,
+                notes: req.notes || '',
+                licenseNumber: req.licenseNumber || '',
+                licenseFrontName: req.licenseFrontName || '',
+                licenseBackName: req.licenseBackName || ''
+            };
+        })
     ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     
     if (allBookings.length === 0) {
@@ -64,9 +91,13 @@ function renderAllBookings() {
             <div class="booking-details">
                 <p><strong>Customer:</strong> ${booking.customerName}</p>
                 <p><strong>Phone:</strong> ${booking.customerPhone}</p>
+                ${booking.contactEmail ? `<p><strong>Email:</strong> ${booking.contactEmail}</p>` : ''}
                 <p><strong>Vehicle:</strong> ${booking.vehicle.make} ${booking.vehicle.model} (${booking.vehicle.rego})</p>
                 <p><strong>Mileage:</strong> ${booking.mileage} km</p>
                 <p><strong>Fuel:</strong> ${booking.fuel}</p>
+                ${booking.licenseNumber ? `<p><strong>License #:</strong> ${booking.licenseNumber}</p>` : ''}
+                ${booking.licenseFrontName ? `<p><strong>License Front:</strong> ${booking.licenseFrontName}</p>` : ''}
+                ${booking.licenseBackName ? `<p><strong>License Back:</strong> ${booking.licenseBackName}</p>` : ''}
                 <p><strong>Date:</strong> ${new Date(booking.timestamp).toLocaleString()}</p>
                 ${booking.location ? `<p><strong>📍 Location:</strong> <a href="https://www.google.com/maps?q=${booking.location.lat},${booking.location.lng}" target="_blank">${booking.location.lat.toFixed(6)}, ${booking.location.lng.toFixed(6)}</a></p>` : ''}
                 ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}

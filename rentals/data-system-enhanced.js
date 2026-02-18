@@ -1,5 +1,5 @@
 /**
- * VERRA RENTALS - PRODUCTION READY PRE-APPROVAL SYSTEM
+ * VEERA RENTALS - PRODUCTION READY PRE-APPROVAL SYSTEM
  * Enhanced Data Structure, Workflows & Calculations
  * 
  * Features:
@@ -364,7 +364,7 @@ const DUMMY_VEHICLES = [
 // ===== REQUEST MANAGEMENT SYSTEM =====
 class RequestManagementSystem {
     constructor() {
-        this.storageKey = 'verra-rentals-requests';
+        this.storageKey = 'veera-rentals-requests';
         this.initializeStorage();
     }
 
@@ -387,8 +387,6 @@ class RequestManagementSystem {
             preferredDate: details.preferredDate,
             preferredTime: details.preferredTime,
             currentMileage: details.currentMileage || null,
-            insurance: details.insurance || 'INS-STD',
-            equipment: details.equipment || [],
             notes: details.notes || '',
             issues: details.issues || '',
             createdAt: new Date().toISOString(),
@@ -414,18 +412,6 @@ class RequestManagementSystem {
         const days = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24)) || 1;
         
         let cost = vehicle.dailyRate * days;
-
-        // Add insurance
-        const insurance = INSURANCE_PLANS[details.insurance.split('-')[1].toUpperCase()] || INSURANCE_PLANS.STANDARD;
-        cost += insurance.dailyRate * days;
-
-        // Add equipment
-        if (details.equipment && details.equipment.length > 0) {
-            details.equipment.forEach(eqId => {
-                const eq = Object.values(EQUIPMENT).find(e => e.id === eqId);
-                if (eq) cost += eq.dailyRate * days;
-            });
-        }
 
         return Math.round(cost * 100) / 100;
     }
@@ -521,7 +507,7 @@ class RequestManagementSystem {
         emailLog.push({
             id: 'EMAIL-' + Date.now(),
             to: customer.email,
-            subject: '✅ Request #' + request.id.substring(0, 12) + ' Approved | Verra Rentals',
+            subject: '✅ Request #' + request.id.substring(0, 12) + ' Approved | Veera Rentals',
             body: `
 Hello ${customer.name},
 
@@ -546,7 +532,7 @@ Please arrive 15 minutes early.
 Bring your driver's license and a valid payment method.
 
 Safe travels!
-Verra Rentals Management
+Veera Rentals Management
             `,
             status: 'sent',
             type: 'approval',
@@ -577,10 +563,10 @@ Reason: ${request.denyReason || 'Not available for selected date'}
 
 Please contact our support team to discuss alternatives:
 📞 1-800-STARR-365
-📧 support@verrarentals.com
+📧 support@veerarentals.com
 
 Best regards,
-Verra Rentals Management
+Veera Rentals Management
             `,
             status: 'sent',
             type: 'denial',
@@ -775,11 +761,9 @@ const customerSystem = new CustomerManagementSystem();
 const analyticsSystem = new AnalyticsSystem();
 
 function initializeDummyData() {
-    console.log('✅ Verra Rentals Enhanced System Initialized');
+    console.log('✅ Veera Rentals Enhanced System Initialized');
     console.log('📊 Fleet: ' + vehicleSystem.getAllVehicles().length + ' vehicles');
     console.log('👥 Customers: ' + customerSystem.getAllCustomers().length + ' registered');
-    console.log('💳 Insurance Plans: 4 options available');
-    console.log('🎁 Equipment: 6 rentable items');
 }
 
 initializeDummyData();

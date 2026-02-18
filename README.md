@@ -1,10 +1,10 @@
 # 🚀 Business Operations Platform
 
-Complete online solution for **Verra Rentals** and **Veera Food Corner** management.
+Complete online solution for **Veera Rentals** and **Veera Food Corner** management.
 
 ## 📋 Contents
 
-- **🚗 `/rentals`** - Verra Rentals System
+- **🚗 `/rentals`** - Veera Rentals System
   - Admin dashboard with fleet management
   - QR code-based check-in/out process
   - Real-time booking system
@@ -34,7 +34,7 @@ https://yourusername.github.io/business-online/food
 ### Start both servers:
 ```bash
 cd ~/Desktop/website && python3 -m http.server 8000 &
-cd ~/Desktop/verra-rentals && python3 -m http.server 8080 &
+cd ~/Desktop/veera-rentals && python3 -m http.server 8080 &
 ```
 
 ### Access locally:
@@ -49,7 +49,7 @@ pkill -f "http.server"
 
 ## 📦 Features
 
-### Verra Rentals
+### Veera Rentals
 - ✅ Fleet management (add/edit vehicles)
 - ✅ Real-time booking system
 - ✅ QR code generation for pickups

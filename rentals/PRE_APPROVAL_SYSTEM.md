@@ -1,8 +1,8 @@
-# 🚗 Verra Rentals Pre-Approval Car Swap & Drop-off Management System
+# 🚗 Veera Rentals Pre-Approval Car Swap & Drop-off Management System
 
 ## 📋 Overview
 
-This document outlines the complete Pre-Approval Car Swap & Drop-off Management System built for Verra Rentals. The system enables customers to submit rental requests (pickup, swap, dropoff) which are then reviewed and approved by admins with specific location and time details.
+This document outlines the complete Pre-Approval Car Swap & Drop-off Management System built for Veera Rentals. The system enables customers to submit rental requests (pickup, swap, dropoff) which are then reviewed and approved by admins with specific location and time details.
 
 ---
 

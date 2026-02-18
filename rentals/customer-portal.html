@@ -1216,7 +1216,12 @@
 
         // ===== LOGOUT =====
         function logout() {
-            authSystem.logout();
+            // Clear session data
+            sessionStorage.removeItem('serviceType');
+            localStorage.removeItem('customer_portal_location');
+            
+            // Redirect to scanner page (entry point)
+            window.location.href = 'scanner.html';
         }
 
         // ===== INITIALIZE =====

@@ -897,7 +897,20 @@
         }
 
         // ===== SUBMIT REQUEST =====
-        function submitRequest(e) {
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve) => {
+                if (!file) {
+                    resolve('');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result || '');
+                reader.onerror = () => resolve('');
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function submitRequest(e) {
             e.preventDefault();
 
             if (typeof requestSystem === 'undefined' || typeof vehicleSystem === 'undefined') {
@@ -917,6 +930,11 @@
             const contactEmail = document.getElementById('contactEmail').value.trim();
             const contactPhone = document.getElementById('contactPhone').value.trim();
 
+            const [licenseFrontData, licenseBackData] = await Promise.all([
+                readFileAsDataUrl(licenseFrontFile),
+                readFileAsDataUrl(licenseBackFile)
+            ]);
+
             const request = requestSystem.createRequest(currentCustomer.id, type, {
                 vehicleId,
                 preferredDate,
@@ -926,6 +944,8 @@
                 licenseNumber,
                 licenseFrontName: licenseFrontFile ? licenseFrontFile.name : '',
                 licenseBackName: licenseBackFile ? licenseBackFile.name : '',
+                licenseFrontData,
+                licenseBackData,
                 contactEmail,
                 contactPhone
             });

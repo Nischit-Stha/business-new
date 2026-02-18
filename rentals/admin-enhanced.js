@@ -72,7 +72,9 @@ function renderAllBookings() {
                 notes: req.notes || '',
                 licenseNumber: req.licenseNumber || '',
                 licenseFrontName: req.licenseFrontName || '',
-                licenseBackName: req.licenseBackName || ''
+                licenseBackName: req.licenseBackName || '',
+                licenseFrontData: req.licenseFrontData || '',
+                licenseBackData: req.licenseBackData || ''
             };
         })
     ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -96,8 +98,8 @@ function renderAllBookings() {
                 <p><strong>Mileage:</strong> ${booking.mileage} km</p>
                 <p><strong>Fuel:</strong> ${booking.fuel}</p>
                 ${booking.licenseNumber ? `<p><strong>License #:</strong> ${booking.licenseNumber}</p>` : ''}
-                ${booking.licenseFrontName ? `<p><strong>License Front:</strong> ${booking.licenseFrontName}</p>` : ''}
-                ${booking.licenseBackName ? `<p><strong>License Back:</strong> ${booking.licenseBackName}</p>` : ''}
+                ${booking.licenseFrontName ? `<p><strong>License Front:</strong> ${booking.licenseFrontName} ${booking.licenseFrontData ? `<a href="${booking.licenseFrontData}" target="_blank">(View)</a>` : ''}</p>` : ''}
+                ${booking.licenseBackName ? `<p><strong>License Back:</strong> ${booking.licenseBackName} ${booking.licenseBackData ? `<a href="${booking.licenseBackData}" target="_blank">(View)</a>` : ''}</p>` : ''}
                 <p><strong>Date:</strong> ${new Date(booking.timestamp).toLocaleString()}</p>
                 ${booking.location ? `<p><strong>📍 Location:</strong> <a href="https://www.google.com/maps?q=${booking.location.lat},${booking.location.lng}" target="_blank">${booking.location.lat.toFixed(6)}, ${booking.location.lng.toFixed(6)}</a></p>` : ''}
                 ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}

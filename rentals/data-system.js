@@ -1,5 +1,5 @@
 /**
- * STARR365 CAR RENTAL - PRE-APPROVAL MANAGEMENT SYSTEM
+ * VERRA RENTALS - PRE-APPROVAL MANAGEMENT SYSTEM
  * Data Structure & Workflow Engine
  * 
  * System States:
@@ -161,7 +161,7 @@ const DUMMY_VEHICLES = [
 // ===== REQUEST MANAGEMENT SYSTEM =====
 class RequestManagementSystem {
     constructor() {
-        this.storageKey = 'starr365-requests';
+        this.storageKey = 'verra-rentals-requests';
         this.initializeStorage();
     }
 
@@ -321,7 +321,7 @@ Great news! Your ${request.type} request has been APPROVED.
 Please arrive 15 minutes early. Bring your driver's license and contact details.
 
 Best regards,
-STARR365 Rental Management Team
+Verra Rentals Management Team
             `,
             status: 'sent',
             sentAt: new Date().toISOString()
@@ -349,7 +349,7 @@ We regret to inform you that your ${request.type} request has been DENIED.
 Please contact our support team to discuss alternatives.
 
 Best regards,
-STARR365 Rental Management Team
+Verra Rentals Management Team
             `,
             status: 'sent',
             sentAt: new Date().toISOString()
@@ -422,7 +422,7 @@ const customerSystem = new CustomerManagementSystem();
 function initializeDummyData() {
     // Fleet already initialized in VehicleManagementSystem
     // Requests start empty (will be created by customers)
-    console.log('STARR365 System initialized with:');
+    console.log('Verra Rentals system initialized with:');
     console.log('- 5 Dummy Customers');
     console.log('- 5 Dummy Vehicles');
     console.log('- Pre-Approval Workflow Ready');

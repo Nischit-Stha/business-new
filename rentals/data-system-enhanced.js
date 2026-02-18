@@ -1,5 +1,5 @@
 /**
- * STARR365 CAR RENTAL - PRODUCTION READY PRE-APPROVAL SYSTEM
+ * VERRA RENTALS - PRODUCTION READY PRE-APPROVAL SYSTEM
  * Enhanced Data Structure, Workflows & Calculations
  * 
  * Features:
@@ -364,7 +364,7 @@ const DUMMY_VEHICLES = [
 // ===== REQUEST MANAGEMENT SYSTEM =====
 class RequestManagementSystem {
     constructor() {
-        this.storageKey = 'starr365-requests';
+        this.storageKey = 'verra-rentals-requests';
         this.initializeStorage();
     }
 
@@ -521,7 +521,7 @@ class RequestManagementSystem {
         emailLog.push({
             id: 'EMAIL-' + Date.now(),
             to: customer.email,
-            subject: '✅ Request #' + request.id.substring(0, 12) + ' Approved | STARR365',
+            subject: '✅ Request #' + request.id.substring(0, 12) + ' Approved | Verra Rentals',
             body: `
 Hello ${customer.name},
 
@@ -546,7 +546,7 @@ Please arrive 15 minutes early.
 Bring your driver's license and a valid payment method.
 
 Safe travels!
-STARR365 Rental Management
+Verra Rentals Management
             `,
             status: 'sent',
             type: 'approval',
@@ -577,10 +577,10 @@ Reason: ${request.denyReason || 'Not available for selected date'}
 
 Please contact our support team to discuss alternatives:
 📞 1-800-STARR-365
-📧 support@starr365.com
+📧 support@verrarentals.com
 
 Best regards,
-STARR365 Rental Management
+Verra Rentals Management
             `,
             status: 'sent',
             type: 'denial',
@@ -775,7 +775,7 @@ const customerSystem = new CustomerManagementSystem();
 const analyticsSystem = new AnalyticsSystem();
 
 function initializeDummyData() {
-    console.log('✅ STARR365 Enhanced System Initialized');
+    console.log('✅ Verra Rentals Enhanced System Initialized');
     console.log('📊 Fleet: ' + vehicleSystem.getAllVehicles().length + ' vehicles');
     console.log('👥 Customers: ' + customerSystem.getAllCustomers().length + ' registered');
     console.log('💳 Insurance Plans: 4 options available');

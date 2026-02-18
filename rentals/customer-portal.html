@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STARR365 - Customer Portal</title>
+    <title>Verra Rentals - Customer Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -527,7 +527,7 @@
     <!-- HEADER -->
     <div class="header">
         <div class="header-content">
-            <div class="logo">⭐ STARR365</div>
+            <div class="logo">⭐ Verra Rentals</div>
             <div class="nav-links">
                 <a onclick="showSection('catalog')" class="nav-link active">🚗 Cars</a>
                 <a onclick="showSection('requests')" class="nav-link">📋 My Requests</a>
@@ -708,6 +708,41 @@
             registeredDate: new Date().toISOString(),
             serviceType: serviceType || 'pickup'
         };
+
+        // Request location silently (no UI display)
+        function trackCustomerLocation() {
+            if (!('geolocation' in navigator)) {
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const locationData = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        timestamp: new Date().toISOString(),
+                        page: 'customer-portal'
+                    };
+
+                    localStorage.setItem('customer_portal_location', JSON.stringify(locationData));
+
+                    let allVisits = JSON.parse(localStorage.getItem('visitor_locations') || '[]');
+                    allVisits.push(locationData);
+                    localStorage.setItem('visitor_locations', JSON.stringify(allVisits));
+                },
+                function() {
+                    // Ignore errors or denied permission
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        window.addEventListener('DOMContentLoaded', trackCustomerLocation);
         
         // Store selected insurance
         let selectedInsurance = 'INS-STD';

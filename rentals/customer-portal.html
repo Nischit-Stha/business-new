@@ -620,29 +620,6 @@
                     <textarea id="notes" placeholder="Any special requests or issues..."></textarea>
                 </div>
 
-                <!-- INSURANCE SELECTION -->
-                <div class="form-group">
-                    <label>Insurance Plan (Select One) *</label>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 0.75rem;">
-                        <div style="padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center;" onclick="selectInsurance('INS-BASIC')" id="ins-basic">
-                            <div style="font-weight: 700; color: #1e293b;">Basic</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">$0/day<br>$2500 deductible</div>
-                        </div>
-                        <div style="padding: 1rem; border: 2px solid #3b82f6; border-radius: 8px; cursor: pointer; text-align: center; background: rgba(59, 130, 246, 0.05);" onclick="selectInsurance('INS-STD')" id="ins-std">
-                            <div style="font-weight: 700; color: #1e293b;">Standard ✓</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">$12.99/day<br>$750 deductible</div>
-                        </div>
-                        <div style="padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center;" onclick="selectInsurance('INS-PREM')" id="ins-prem">
-                            <div style="font-weight: 700; color: #1e293b;">Premium</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">$19.99/day<br>$250 deductible</div>
-                        </div>
-                        <div style="padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center;" onclick="selectInsurance('INS-SUPER')" id="ins-super">
-                            <div style="font-weight: 700; color: #1e293b;">Super</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">$29.99/day<br>$0 deductible</div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- COST BREAKDOWN -->
                 <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
                     <div style="font-weight: 700; color: #1e293b; margin-bottom: 1rem;">💰 Estimated Cost Breakdown</div>
@@ -650,14 +627,17 @@
                         <span>Vehicle Daily Rate</span>
                         <span id="costVehicle">$0</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
-                        <span>Insurance</span>
-                        <span id="costInsurance">$0</span>
-                    </div>
                     <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; font-weight: 700; color: #10b981; font-size: 1.1rem;">
                         <span>Total Estimated</span>
                         <span id="costTotal">$0</span>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="acceptTerms" required>
+                        I accept the <a href="term.pdf" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
+                    </label>
                 </div>
 
                 <div style="display: flex; gap: 1rem;">
@@ -744,25 +724,6 @@
 
         window.addEventListener('DOMContentLoaded', trackCustomerLocation);
         
-        // Store selected insurance
-        let selectedInsurance = 'INS-STD';
-
-        // ===== UI FUNCTIONS =====
-        function selectInsurance(insId) {
-            selectedInsurance = insId;
-            // Update UI
-            document.querySelectorAll('[id^="ins-"]').forEach(el => {
-                el.style.borderColor = '#e2e8f0';
-                el.style.background = 'white';
-            });
-            const selectedEl = document.getElementById('ins-' + insId.split('-')[1].toLowerCase());
-            if (selectedEl) {
-                selectedEl.style.borderColor = '#3b82f6';
-                selectedEl.style.background = 'rgba(59, 130, 246, 0.05)';
-            }
-            calculateCost();
-        }
-
         function calculateCost() {
             const vehicleId = document.getElementById('selectedVehicle').value;
             const vehicle = vehicleSystem.getVehicleById(vehicleId);
@@ -770,7 +731,6 @@
 
             if (!vehicle || !preferredDate) {
                 document.getElementById('costVehicle').textContent = '$0';
-                document.getElementById('costInsurance').textContent = '$0';
                 document.getElementById('costTotal').textContent = '$0';
                 return;
             }
@@ -784,14 +744,8 @@
             const vehicleCost = vehicle.dailyRate * days;
             document.getElementById('costVehicle').textContent = '$' + vehicleCost.toFixed(2);
 
-            // Insurance cost
-            const insCode = selectedInsurance.split('-')[1];
-            const insuranceObj = Object.values(INSURANCE_PLANS).find(i => i.id === selectedInsurance);
-            const insuranceCost = (insuranceObj.dailyRate * days);
-            document.getElementById('costInsurance').textContent = '$' + insuranceCost.toFixed(2);
-
             // Total
-            const total = vehicleCost + insuranceCost;
+            const total = vehicleCost;
             document.getElementById('costTotal').textContent = '$' + total.toFixed(2);
         }
 
@@ -964,7 +918,6 @@
                 preferredTime,
                 notes,
                 currentMileage,
-                insurance: selectedInsurance,
                 licenseNumber,
                 licenseFrontName: licenseFrontFile ? licenseFrontFile.name : '',
                 licenseBackName: licenseBackFile ? licenseBackFile.name : '',
@@ -987,7 +940,6 @@
             document.getElementById('licenseBack').value = '';
             document.getElementById('contactEmail').value = '';
             document.getElementById('contactPhone').value = '';
-            selectedInsurance = 'INS-STD';
 
             openModal('successModal');
             setTimeout(() => showSection('requests'), 2000);

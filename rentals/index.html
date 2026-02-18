@@ -6,6 +6,15 @@
     <title>Veera Rentals Management System</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Hide content until authenticated */
+        body {
+            visibility: hidden;
+        }
+        body.authenticated {
+            visibility: visible;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -312,6 +321,9 @@
         if (!authSystem.requireAdminAuth()) {
             throw new Error('Not authenticated');
         }
+        
+        // Show content after authentication
+        document.body.classList.add('authenticated');
         
         // Display admin user info
         const adminUser = authSystem.getAdminUser();

@@ -900,6 +900,11 @@
         function submitRequest(e) {
             e.preventDefault();
 
+            if (typeof requestSystem === 'undefined' || typeof vehicleSystem === 'undefined') {
+                alert('System is still loading. Please try again in a moment.');
+                return;
+            }
+
             const type = document.getElementById('requestType').value;
             const vehicleId = document.getElementById('selectedVehicle').value;
             const preferredDate = document.getElementById('preferredDate').value;
@@ -926,8 +931,10 @@
             });
 
             const vehicle = vehicleSystem.getVehicleById(vehicleId);
+            const vehicleLabel = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'the selected vehicle';
+            const estimatedCost = typeof request.estimatedCost === 'number' ? request.estimatedCost : 0;
             document.getElementById('successMessage').textContent = 
-                `Your ${type} request (${request.id.substring(0, 12)}) for ${vehicle.year} ${vehicle.make} ${vehicle.model} has been submitted!\n\nEstimated Cost: $${request.estimatedCost}\n\nYou'll receive an email once it's approved.`;
+                `Your ${type} request (${request.id.substring(0, 12)}) for ${vehicleLabel} has been submitted!\n\nEstimated Cost: $${estimatedCost}\n\nYou'll receive an email once it's approved.`;
 
             document.getElementById('requestType').value = '';
             document.getElementById('selectedVehicle').value = '';

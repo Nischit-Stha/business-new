@@ -863,6 +863,8 @@
         function updateFormFields() {
             const type = document.getElementById('requestType').value;
             const currentVehicleField = document.getElementById('currentVehicleField');
+            const selectVehicleField = document.getElementById('selectVehicleField');
+            const selectedVehicle = document.getElementById('selectedVehicle');
             const licenseFields = document.getElementById('licenseFields');
             const licensePhotos = document.getElementById('licensePhotos');
             const contactFields = document.getElementById('contactFields');
@@ -883,6 +885,14 @@
                 currentVehicleField.style.display = 'block';
             } else {
                 currentVehicleField.style.display = 'none';
+            }
+
+            // Show/hide vehicle selection for drop-off
+            const needsVehicle = type === 'pickup' || type === 'swap';
+            selectVehicleField.style.display = needsVehicle ? 'block' : 'none';
+            selectedVehicle.required = needsVehicle;
+            if (!needsVehicle) {
+                selectedVehicle.value = '';
             }
 
             // Show/hide license fields for pickup
@@ -1155,6 +1165,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('currentCustomerName').textContent = currentCustomer.name;
             loadCatalog();
+
+            if (serviceType) {
+                const typeSelect = document.getElementById('requestType');
+                typeSelect.value = serviceType;
+                updateFormFields();
+                showSection('request-form');
+            }
         });
     </script>
 </body>

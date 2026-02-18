@@ -616,31 +616,6 @@
                     </div>
                 </div>
 
-                <!-- EQUIPMENT OPTIONS -->
-                <div class="form-group">
-                    <label>Optional Equipment</label>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 0.75rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            <input type="checkbox" value="EQ-GPS" onchange="toggleEquipment(this)"> 🗺️ GPS ($5/day)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            <input type="checkbox" value="EQ-CS" onchange="toggleEquipment(this)"> 👶 Child Seat ($8/day)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            <input type="checkbox" value="EQ-BS" onchange="toggleEquipment(this)"> 🪑 Booster Seat ($6/day)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            <input type="checkbox" value="EQ-WIFI" onchange="toggleEquipment(this)"> 📡 WiFi Hotspot ($4/day)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            <input type="checkbox" value="EQ-RR" onchange="toggleEquipment(this)"> 🏗️ Roof Rack ($10/day)
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            <input type="checkbox" value="EQ-SKI" onchange="toggleEquipment(this)"> ⛷️ Ski Rack ($12/day)
-                        </label>
-                    </div>
-                </div>
-
                 <!-- COST BREAKDOWN -->
                 <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
                     <div style="font-weight: 700; color: #1e293b; margin-bottom: 1rem;">💰 Estimated Cost Breakdown</div>
@@ -651,10 +626,6 @@
                     <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
                         <span>Insurance</span>
                         <span id="costInsurance">$0</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
-                        <span>Equipment</span>
-                        <span id="costEquipment">$0</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; font-weight: 700; color: #10b981; font-size: 1.1rem;">
                         <span>Total Estimated</span>
@@ -711,9 +682,8 @@
             serviceType: serviceType || 'pickup'
         };
         
-        // Store selected insurance and equipment
+        // Store selected insurance
         let selectedInsurance = 'INS-STD';
-        let selectedEquipment = [];
 
         // ===== UI FUNCTIONS =====
         function selectInsurance(insId) {
@@ -731,15 +701,6 @@
             calculateCost();
         }
 
-        function toggleEquipment(checkbox) {
-            if (checkbox.checked) {
-                selectedEquipment.push(checkbox.value);
-            } else {
-                selectedEquipment = selectedEquipment.filter(e => e !== checkbox.value);
-            }
-            calculateCost();
-        }
-
         function calculateCost() {
             const vehicleId = document.getElementById('selectedVehicle').value;
             const vehicle = vehicleSystem.getVehicleById(vehicleId);
@@ -748,7 +709,6 @@
             if (!vehicle || !preferredDate) {
                 document.getElementById('costVehicle').textContent = '$0';
                 document.getElementById('costInsurance').textContent = '$0';
-                document.getElementById('costEquipment').textContent = '$0';
                 document.getElementById('costTotal').textContent = '$0';
                 return;
             }
@@ -768,16 +728,8 @@
             const insuranceCost = (insuranceObj.dailyRate * days);
             document.getElementById('costInsurance').textContent = '$' + insuranceCost.toFixed(2);
 
-            // Equipment cost
-            let equipmentCost = 0;
-            selectedEquipment.forEach(eqId => {
-                const eq = Object.values(EQUIPMENT).find(e => e.id === eqId);
-                if (eq) equipmentCost += eq.dailyRate * days;
-            });
-            document.getElementById('costEquipment').textContent = '$' + equipmentCost.toFixed(2);
-
             // Total
-            const total = vehicleCost + insuranceCost + equipmentCost;
+            const total = vehicleCost + insuranceCost;
             document.getElementById('costTotal').textContent = '$' + total.toFixed(2);
         }
 

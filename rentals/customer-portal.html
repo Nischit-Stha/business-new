@@ -696,13 +696,29 @@
     <script src="data-system-enhanced.js"></script>
     <script src="auth-system.js"></script>
     <script>
-        // ===== REQUIRE AUTHENTICATION =====
-        if (!authSystem.requireAuth()) {
-            throw new Error('Not authenticated');
+        // ===== REQUIRE AUTHENTICATION (SKIP FOR PICKUP GUESTS) =====
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceType = urlParams.get('type') || sessionStorage.getItem('serviceType');
+        const allowGuestPickup = serviceType === 'pickup';
+
+        let currentCustomer = null;
+
+        if (allowGuestPickup) {
+            currentCustomer = {
+                id: `guest-${Date.now()}`,
+                name: 'Guest Customer',
+                email: 'guest@example.com',
+                phone: 'Not provided',
+                licenseNumber: 'Not provided',
+                totalRentals: 0,
+                registeredDate: new Date().toISOString()
+            };
+        } else {
+            if (!authSystem.requireAuth()) {
+                throw new Error('Not authenticated');
+            }
+            currentCustomer = authSystem.getCurrentUser();
         }
-        
-        // ===== CURRENT CUSTOMER =====
-        let currentCustomer = authSystem.getCurrentUser();
         
         // Store selected insurance and equipment
         let selectedInsurance = 'INS-STD';

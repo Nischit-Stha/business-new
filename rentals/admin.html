@@ -66,6 +66,16 @@
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
         .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; }
+        #customer-profile-modal .modal-content { max-width: 800px; max-height: 90vh; overflow-y: auto; }
+        .profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
+        .profile-section { margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; }
+        .profile-section h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: #1a1a1a; }
+        .profile-section p { margin: 0.5rem 0; color: #333; }
+        .license-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .license-photo { text-align: center; }
+        .license-photo h4 { font-size: 0.9rem; margin-bottom: 0.5rem; color: #666; }
+        .license-image { width: 100%; max-width: 350px; height: auto; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .booking-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s; }
     </style>
 </head>
 <body>
@@ -123,6 +133,16 @@
             </section>
         </div>
     </main>
+
+    <!-- Customer Profile Modal -->
+    <div id="customer-profile-modal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                <button class="close-btn" onclick="closeCustomerProfile()">×</button>
+            </div>
+            <div id="customer-profile-content"></div>
+        </div>
+    </div>
 
     <script type="module" src="firebase-init.js"></script>
     <script src="admin-enhanced.js"></script>

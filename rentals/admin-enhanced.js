@@ -133,8 +133,8 @@ async function renderAllBookings() {
         return;
     }
     
-    bookingsGrid.innerHTML = allBookings.map(booking => `
-        <div class="booking-card ${booking.type.toLowerCase()}">
+    bookingsGrid.innerHTML = allBookings.map((booking, index) => `
+        <div class="booking-card ${booking.type.toLowerCase()}" onclick="showCustomerProfile(${index})" style="cursor: pointer;">
             <div class="booking-header">
                 <span class="booking-type-badge">${booking.type}</span>
                 <span class="booking-ref">${booking.serviceRef}</span>
@@ -144,17 +144,14 @@ async function renderAllBookings() {
                 <p><strong>Phone:</strong> ${booking.customerPhone}</p>
                 ${booking.contactEmail ? `<p><strong>Email:</strong> ${booking.contactEmail}</p>` : ''}
                 <p><strong>Vehicle:</strong> ${booking.vehicle.make} ${booking.vehicle.model} (${booking.vehicle.rego})</p>
-                <p><strong>Mileage:</strong> ${booking.mileage} km</p>
-                <p><strong>Fuel:</strong> ${booking.fuel}</p>
                 ${booking.licenseNumber ? `<p><strong>License #:</strong> ${booking.licenseNumber}</p>` : ''}
-                ${booking.licenseFrontName ? `<p><strong>License Front:</strong> ${booking.licenseFrontName} ${booking.licenseFrontUrl ? `<a href="${booking.licenseFrontUrl}" target="_blank">(View)</a>` : (booking.licenseFrontData ? `<a href="${booking.licenseFrontData}" target="_blank">(View)</a>` : '')}</p>` : ''}
-                ${booking.licenseBackName ? `<p><strong>License Back:</strong> ${booking.licenseBackName} ${booking.licenseBackUrl ? `<a href="${booking.licenseBackUrl}" target="_blank">(View)</a>` : (booking.licenseBackData ? `<a href="${booking.licenseBackData}" target="_blank">(View)</a>` : '')}</p>` : ''}
-                <p><strong>Date:</strong> ${new Date(booking.timestamp).toLocaleString()}</p>
-                ${booking.location ? `<p><strong>📍 Location:</strong> <a href="https://www.google.com/maps?q=${booking.location.lat},${booking.location.lng}" target="_blank">${booking.location.lat.toFixed(6)}, ${booking.location.lng.toFixed(6)}</a></p>` : ''}
-                ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}
+                <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">👤 Click to view full profile</p>
             </div>
         </div>
     `).join('');
+    
+    // Store bookings globally for modal access
+    window.currentBookings = allBookings;
 }
 
 // Render Inventory (Fleet)
@@ -438,6 +435,84 @@ function exportAllData() {
 
 function printReport() {
     window.print();
+}
+
+// Show Customer Profile Modal
+function showCustomerProfile(index) {
+    const booking = window.currentBookings[index];
+    if (!booking) return;
+    
+    const modal = document.getElementById('customer-profile-modal');
+    if (!modal) return;
+    
+    const content = `
+        <div class="profile-header">
+            <h2>👤 Customer Profile</h2>
+            <span class="booking-type-badge">${booking.type}</span>
+        </div>
+        
+        <div class="profile-section">
+            <h3>📋 Booking Information</h3>
+            <p><strong>Reference:</strong> ${booking.serviceRef}</p>
+            <p><strong>Date:</strong> ${new Date(booking.timestamp).toLocaleString()}</p>
+            ${booking.location ? `<p><strong>📍 Location:</strong> <a href="https://www.google.com/maps?q=${booking.location.lat},${booking.location.lng}" target="_blank">${booking.location.lat.toFixed(6)}, ${booking.location.lng.toFixed(6)}</a></p>` : ''}
+        </div>
+        
+        <div class="profile-section">
+            <h3>👤 Customer Details</h3>
+            <p><strong>Name:</strong> ${booking.customerName}</p>
+            <p><strong>Phone:</strong> ${booking.customerPhone}</p>
+            ${booking.contactEmail ? `<p><strong>Email:</strong> ${booking.contactEmail}</p>` : ''}
+            ${booking.licenseNumber ? `<p><strong>License Number:</strong> ${booking.licenseNumber}</p>` : ''}
+        </div>
+        
+        ${(booking.licenseFrontUrl || booking.licenseFrontData || booking.licenseBackUrl || booking.licenseBackData) ? `
+        <div class="profile-section">
+            <h3>🪪 License Photos</h3>
+            <div class="license-photos">
+                ${(booking.licenseFrontUrl || booking.licenseFrontData) ? `
+                    <div class="license-photo">
+                        <h4>Front</h4>
+                        <img src="${booking.licenseFrontUrl || booking.licenseFrontData}" alt="License Front" class="license-image" />
+                        <a href="${booking.licenseFrontUrl || booking.licenseFrontData}" target="_blank" class="btn btn-small">Open in New Tab</a>
+                    </div>
+                ` : ''}
+                ${(booking.licenseBackUrl || booking.licenseBackData) ? `
+                    <div class="license-photo">
+                        <h4>Back</h4>
+                        <img src="${booking.licenseBackUrl || booking.licenseBackData}" alt="License Back" class="license-image" />
+                        <a href="${booking.licenseBackUrl || booking.licenseBackData}" target="_blank" class="btn btn-small">Open in New Tab</a>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+        ` : ''}
+        
+        <div class="profile-section">
+            <h3>🚗 Vehicle Information</h3>
+            <p><strong>Vehicle:</strong> ${booking.vehicle.make} ${booking.vehicle.model}</p>
+            <p><strong>Rego:</strong> ${booking.vehicle.rego}</p>
+            <p><strong>Mileage:</strong> ${booking.mileage} km</p>
+            <p><strong>Fuel:</strong> ${booking.fuel}</p>
+        </div>
+        
+        ${booking.notes ? `
+        <div class="profile-section">
+            <h3>📝 Notes</h3>
+            <p>${booking.notes}</p>
+        </div>
+        ` : ''}
+    `;
+    
+    document.getElementById('customer-profile-content').innerHTML = content;
+    modal.classList.add('active');
+}
+
+function closeCustomerProfile() {
+    const modal = document.getElementById('customer-profile-modal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
 }
 
 // Initialize on load

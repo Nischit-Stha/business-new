@@ -671,6 +671,7 @@
         </div>
     </div>
 
+    <script type="module" src="firebase-init.js"></script>
     <script src="data-system-enhanced.js"></script>
     <script src="auth-system.js"></script>
     <script>
@@ -910,6 +911,17 @@
             });
         }
 
+        async function uploadLicensePhoto(requestId, file, side) {
+            if (!file) return '';
+            if (!window.firebaseServices) return '';
+
+            const { storage, ref, uploadBytes, getDownloadURL } = window.firebaseServices;
+            const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const storageRef = ref(storage, `requests/${requestId}/license-${side}-${safeName}`);
+            await uploadBytes(storageRef, file);
+            return getDownloadURL(storageRef);
+        }
+
         async function submitRequest(e) {
             e.preventDefault();
 
@@ -930,10 +942,28 @@
             const contactEmail = document.getElementById('contactEmail').value.trim();
             const contactPhone = document.getElementById('contactPhone').value.trim();
 
+            const requestId = 'REQ-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+
             const [licenseFrontData, licenseBackData] = await Promise.all([
                 readFileAsDataUrl(licenseFrontFile),
                 readFileAsDataUrl(licenseBackFile)
             ]);
+
+            let licenseFrontUrl = '';
+            let licenseBackUrl = '';
+
+            if (window.firebaseServices && window.firebaseServices.storage) {
+                try {
+                    const [frontUrl, backUrl] = await Promise.all([
+                        uploadLicensePhoto(requestId, licenseFrontFile, 'front'),
+                        uploadLicensePhoto(requestId, licenseBackFile, 'back')
+                    ]);
+                    licenseFrontUrl = frontUrl;
+                    licenseBackUrl = backUrl;
+                } catch (error) {
+                    console.log('Failed to upload license photos:', error);
+                }
+            }
 
             const request = requestSystem.createRequest(currentCustomer.id, type, {
                 vehicleId,
@@ -946,15 +976,45 @@
                 licenseBackName: licenseBackFile ? licenseBackFile.name : '',
                 licenseFrontData,
                 licenseBackData,
+                licenseFrontUrl,
+                licenseBackUrl,
                 contactEmail,
                 contactPhone
             });
+
+            if (window.firebaseServices) {
+                try {
+                    const { db, doc, setDoc, serverTimestamp } = window.firebaseServices;
+                    await setDoc(doc(db, 'requests', requestId), {
+                        id: requestId,
+                        customerId: currentCustomer.id,
+                        type,
+                        status: 'pending',
+                        vehicleId,
+                        preferredDate,
+                        preferredTime,
+                        currentMileage,
+                        notes,
+                        createdAt: serverTimestamp(),
+                        createdAtIso: new Date().toISOString(),
+                        licenseNumber,
+                        licenseFrontName: licenseFrontFile ? licenseFrontFile.name : '',
+                        licenseBackName: licenseBackFile ? licenseBackFile.name : '',
+                        licenseFrontUrl,
+                        licenseBackUrl,
+                        contactEmail,
+                        contactPhone
+                    });
+                } catch (error) {
+                    console.log('Failed to save to Firestore:', error);
+                }
+            }
 
             const vehicle = vehicleSystem.getVehicleById(vehicleId);
             const vehicleLabel = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'the selected vehicle';
             const estimatedCost = typeof request.estimatedCost === 'number' ? request.estimatedCost : 0;
             document.getElementById('successMessage').textContent = 
-                `Your ${type} request (${request.id.substring(0, 12)}) for ${vehicleLabel} has been submitted!\n\nEstimated Cost: $${estimatedCost}\n\nYou'll receive an email once it's approved.`;
+                `Your ${type} request (${requestId.substring(0, 12)}) for ${vehicleLabel} has been submitted!\n\nEstimated Cost: $${estimatedCost}\n\nYou'll receive an email once it's approved.`;
 
             document.getElementById('requestType').value = '';
             document.getElementById('selectedVehicle').value = '';

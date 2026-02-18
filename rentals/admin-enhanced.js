@@ -36,12 +36,28 @@ function showTab(tabName) {
     }
 }
 
+async function fetchFirestoreRequests() {
+    if (!window.firebaseServices || !window.firebaseServices.db) {
+        return [];
+    }
+
+    try {
+        const { db, collection, getDocs } = window.firebaseServices;
+        const snapshot = await getDocs(collection(db, 'requests'));
+        return snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+    } catch (error) {
+        console.log('Failed to load Firestore requests:', error);
+        return [];
+    }
+}
+
 // Render All Bookings
-function renderAllBookings() {
+async function renderAllBookings() {
     const pickups = JSON.parse(localStorage.getItem('veera-rentals-pickups') || '[]');
     const dropoffs = JSON.parse(localStorage.getItem('veera-rentals-dropoffs') || '[]');
     const swaps = JSON.parse(localStorage.getItem('veera-rentals-swaps') || '[]');
     const requests = JSON.parse(localStorage.getItem('veera-rentals-requests') || '[]');
+    const firestoreRequests = await fetchFirestoreRequests();
     const fleet = JSON.parse(localStorage.getItem('fleet-data') || '[]');
     const fleetMap = new Map(fleet.map(vehicle => [vehicle.id, vehicle]));
     
@@ -74,7 +90,40 @@ function renderAllBookings() {
                 licenseFrontName: req.licenseFrontName || '',
                 licenseBackName: req.licenseBackName || '',
                 licenseFrontData: req.licenseFrontData || '',
-                licenseBackData: req.licenseBackData || ''
+                licenseBackData: req.licenseBackData || '',
+                licenseFrontUrl: req.licenseFrontUrl || '',
+                licenseBackUrl: req.licenseBackUrl || ''
+            };
+        }),
+        ...firestoreRequests.map(req => {
+            const vehicle = fleetMap.get(req.vehicleId) || {
+                make: 'Vehicle',
+                model: req.vehicleId || 'N/A',
+                rego: 'N/A'
+            };
+            const typeLabel = req.type ? (req.type.charAt(0).toUpperCase() + req.type.slice(1)) : 'Request';
+            const createdAt = req.createdAt && typeof req.createdAt.toDate === 'function'
+                ? req.createdAt.toDate().toISOString()
+                : (req.createdAtIso || new Date().toISOString());
+            return {
+                type: typeLabel,
+                serviceRef: req.id || 'REQ',
+                customerName: req.contactEmail || 'Guest Customer',
+                customerPhone: req.contactPhone || 'N/A',
+                contactEmail: req.contactEmail || '',
+                vehicle: vehicle,
+                mileage: req.currentMileage || 'N/A',
+                fuel: 'N/A',
+                timestamp: createdAt,
+                location: null,
+                notes: req.notes || '',
+                licenseNumber: req.licenseNumber || '',
+                licenseFrontName: req.licenseFrontName || '',
+                licenseBackName: req.licenseBackName || '',
+                licenseFrontData: req.licenseFrontData || '',
+                licenseBackData: req.licenseBackData || '',
+                licenseFrontUrl: req.licenseFrontUrl || '',
+                licenseBackUrl: req.licenseBackUrl || ''
             };
         })
     ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -98,8 +147,8 @@ function renderAllBookings() {
                 <p><strong>Mileage:</strong> ${booking.mileage} km</p>
                 <p><strong>Fuel:</strong> ${booking.fuel}</p>
                 ${booking.licenseNumber ? `<p><strong>License #:</strong> ${booking.licenseNumber}</p>` : ''}
-                ${booking.licenseFrontName ? `<p><strong>License Front:</strong> ${booking.licenseFrontName} ${booking.licenseFrontData ? `<a href="${booking.licenseFrontData}" target="_blank">(View)</a>` : ''}</p>` : ''}
-                ${booking.licenseBackName ? `<p><strong>License Back:</strong> ${booking.licenseBackName} ${booking.licenseBackData ? `<a href="${booking.licenseBackData}" target="_blank">(View)</a>` : ''}</p>` : ''}
+                ${booking.licenseFrontName ? `<p><strong>License Front:</strong> ${booking.licenseFrontName} ${booking.licenseFrontUrl ? `<a href="${booking.licenseFrontUrl}" target="_blank">(View)</a>` : (booking.licenseFrontData ? `<a href="${booking.licenseFrontData}" target="_blank">(View)</a>` : '')}</p>` : ''}
+                ${booking.licenseBackName ? `<p><strong>License Back:</strong> ${booking.licenseBackName} ${booking.licenseBackUrl ? `<a href="${booking.licenseBackUrl}" target="_blank">(View)</a>` : (booking.licenseBackData ? `<a href="${booking.licenseBackData}" target="_blank">(View)</a>` : '')}</p>` : ''}
                 <p><strong>Date:</strong> ${new Date(booking.timestamp).toLocaleString()}</p>
                 ${booking.location ? `<p><strong>📍 Location:</strong> <a href="https://www.google.com/maps?q=${booking.location.lat},${booking.location.lng}" target="_blank">${booking.location.lat.toFixed(6)}, ${booking.location.lng.toFixed(6)}</a></p>` : ''}
                 ${booking.notes ? `<p><strong>Notes:</strong> ${booking.notes}</p>` : ''}

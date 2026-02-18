@@ -593,6 +593,17 @@
                     </div>
                 </div>
 
+                <div id="contactFields" class="form-row" style="display:none;">
+                    <div class="form-group">
+                        <label>Contact Email *</label>
+                        <input type="email" id="contactEmail" placeholder="Enter email address">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number *</label>
+                        <input type="tel" id="contactPhone" placeholder="Enter phone number">
+                    </div>
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Preferred Date *</label>
@@ -850,6 +861,7 @@
             const currentVehicleField = document.getElementById('currentVehicleField');
             const licenseFields = document.getElementById('licenseFields');
             const licensePhotos = document.getElementById('licensePhotos');
+            const contactFields = document.getElementById('contactFields');
             const vehicles = vehicleSystem.getAvailableVehicles();
             const vehicleSelect = document.getElementById('selectedVehicle');
 
@@ -873,15 +885,20 @@
             const isPickup = type === 'pickup';
             licenseFields.style.display = isPickup ? 'block' : 'none';
             licensePhotos.style.display = isPickup ? 'grid' : 'none';
+            contactFields.style.display = isPickup ? 'grid' : 'none';
 
             document.getElementById('licenseNumber').required = isPickup;
             document.getElementById('licenseFront').required = isPickup;
             document.getElementById('licenseBack').required = isPickup;
+            document.getElementById('contactEmail').required = isPickup;
+            document.getElementById('contactPhone').required = isPickup;
 
             if (!isPickup) {
                 document.getElementById('licenseNumber').value = '';
                 document.getElementById('licenseFront').value = '';
                 document.getElementById('licenseBack').value = '';
+                document.getElementById('contactEmail').value = '';
+                document.getElementById('contactPhone').value = '';
             }
 
             // Set minimum date
@@ -903,6 +920,8 @@
             const licenseNumber = document.getElementById('licenseNumber').value.trim();
             const licenseFrontFile = document.getElementById('licenseFront').files[0];
             const licenseBackFile = document.getElementById('licenseBack').files[0];
+            const contactEmail = document.getElementById('contactEmail').value.trim();
+            const contactPhone = document.getElementById('contactPhone').value.trim();
 
             const request = requestSystem.createRequest(currentCustomer.id, type, {
                 vehicleId,
@@ -913,7 +932,9 @@
                 insurance: selectedInsurance,
                 licenseNumber,
                 licenseFrontName: licenseFrontFile ? licenseFrontFile.name : '',
-                licenseBackName: licenseBackFile ? licenseBackFile.name : ''
+                licenseBackName: licenseBackFile ? licenseBackFile.name : '',
+                contactEmail,
+                contactPhone
             });
 
             const vehicle = vehicleSystem.getVehicleById(vehicleId);
@@ -929,6 +950,8 @@
             document.getElementById('licenseNumber').value = '';
             document.getElementById('licenseFront').value = '';
             document.getElementById('licenseBack').value = '';
+            document.getElementById('contactEmail').value = '';
+            document.getElementById('contactPhone').value = '';
             selectedInsurance = 'INS-STD';
 
             openModal('successModal');

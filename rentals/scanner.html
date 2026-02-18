@@ -277,6 +277,52 @@
     </div>
     
     <script>
+        // ===== GEOLOCATION TRACKING =====
+        // Request and store customer location when they visit
+        function trackCustomerLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const locationData = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: new Date().toISOString(),
+                            page: 'scanner'
+                        };
+                        
+                        // Store in localStorage
+                        localStorage.setItem('customer_location', JSON.stringify(locationData));
+                        
+                        // Also save to a list of all visitor locations
+                        let allVisits = JSON.parse(localStorage.getItem('visitor_locations') || '[]');
+                        allVisits.push(locationData);
+                        localStorage.setItem('visitor_locations', JSON.stringify(allVisits));
+                        
+                        console.log('Customer location tracked:', locationData);
+                        
+                        // Optional: Send to server/analytics here
+                        // sendLocationToServer(locationData);
+                    },
+                    function(error) {
+                        console.log('Location access denied or unavailable:', error.message);
+                        // Still allow page to function normally
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                console.log('Geolocation not supported by this browser');
+            }
+        }
+        
+        // Track location on page load
+        window.addEventListener('DOMContentLoaded', trackCustomerLocation);
+        
+        // ===== SERVICE SELECTION =====
         function selectService(type) {
             // Store selection
             sessionStorage.setItem('serviceType', type);

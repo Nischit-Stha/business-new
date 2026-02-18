@@ -910,19 +910,20 @@
                 regoNumber.value = '';
             }
 
-            // Show/hide license fields for pickup
+            // Show/hide license fields for pickup/drop-off
             const isPickup = type === 'pickup';
-            licenseFields.style.display = isPickup ? 'block' : 'none';
+            const isDropoff = type === 'dropoff';
+            licenseFields.style.display = (isPickup || isDropoff) ? 'block' : 'none';
             licensePhotos.style.display = isPickup ? 'grid' : 'none';
             contactFields.style.display = isPickup ? 'grid' : 'none';
 
-            document.getElementById('licenseNumber').required = isPickup;
+            document.getElementById('licenseNumber').required = (isPickup || isDropoff);
             document.getElementById('licenseFront').required = isPickup;
             document.getElementById('licenseBack').required = isPickup;
             document.getElementById('contactEmail').required = isPickup;
             document.getElementById('contactPhone').required = isPickup;
 
-            if (!isPickup) {
+            if (!isPickup && !isDropoff) {
                 document.getElementById('licenseNumber').value = '';
                 document.getElementById('licenseFront').value = '';
                 document.getElementById('licenseBack').value = '';
@@ -975,8 +976,8 @@
             const preferredTime = document.getElementById('preferredTime').value;
             const notes = document.getElementById('notes').value;
             const currentMileage = document.getElementById('currentMileage').value;
-            const regoNumber = document.getElementById('regoNumber').value.trim();
-            const licenseNumber = document.getElementById('licenseNumber').value.trim();
+            const regoNumber = document.getElementById('regoNumber').value.trim().toUpperCase();
+            const licenseNumber = document.getElementById('licenseNumber').value.trim().toUpperCase();
             const licenseFrontFile = document.getElementById('licenseFront').files[0];
             const licenseBackFile = document.getElementById('licenseBack').files[0];
             const contactEmail = document.getElementById('contactEmail').value.trim();
@@ -1010,9 +1011,14 @@
 
             if (type === 'dropoff') {
                 const fleet = vehicleSystem.getAllVehicles();
-                const matchedVehicle = fleet.find(v => (v.rego || '').toLowerCase() === regoNumber.toLowerCase());
+                const matchedVehicle = fleet.find(v => (v.rego || '').toUpperCase() === regoNumber);
                 if (!matchedVehicle) {
                     alert('Rego not found in the system. Please check and try again.');
+                    return;
+                }
+                const assignedLicense = (matchedVehicle.assignedLicense || '').toUpperCase();
+                if (!assignedLicense || assignedLicense !== licenseNumber) {
+                    alert('License number does not match the record for this vehicle.');
                     return;
                 }
                 resolvedVehicleId = matchedVehicle.id;
@@ -1023,7 +1029,16 @@
 
                 vehicleSystem.updateVehicle(matchedVehicle.id, {
                     status: 'available',
-                    availableFrom: availableFrom
+                    availableFrom: availableFrom,
+                    assignedLicense: '',
+                    assignedCustomer: ''
+                });
+            }
+
+            if (type === 'pickup' && resolvedVehicleId) {
+                vehicleSystem.updateVehicle(resolvedVehicleId, {
+                    assignedLicense: licenseNumber,
+                    assignedCustomer: contactEmail || 'Guest Customer'
                 });
             }
 

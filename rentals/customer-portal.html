@@ -577,6 +577,22 @@
                     <input type="number" id="currentMileage" placeholder="Odometer reading">
                 </div>
 
+                <div id="licenseFields" class="form-group" style="display:none;">
+                    <label>Driver License Number *</label>
+                    <input type="text" id="licenseNumber" placeholder="Enter license number">
+                </div>
+
+                <div id="licensePhotos" class="form-row" style="display:none;">
+                    <div class="form-group">
+                        <label>License Front Photo *</label>
+                        <input type="file" id="licenseFront" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label>License Back Photo *</label>
+                        <input type="file" id="licenseBack" accept="image/*">
+                    </div>
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Preferred Date *</label>
@@ -832,6 +848,8 @@
         function updateFormFields() {
             const type = document.getElementById('requestType').value;
             const currentVehicleField = document.getElementById('currentVehicleField');
+            const licenseFields = document.getElementById('licenseFields');
+            const licensePhotos = document.getElementById('licensePhotos');
             const vehicles = vehicleSystem.getAvailableVehicles();
             const vehicleSelect = document.getElementById('selectedVehicle');
 
@@ -851,6 +869,21 @@
                 currentVehicleField.style.display = 'none';
             }
 
+            // Show/hide license fields for pickup
+            const isPickup = type === 'pickup';
+            licenseFields.style.display = isPickup ? 'block' : 'none';
+            licensePhotos.style.display = isPickup ? 'grid' : 'none';
+
+            document.getElementById('licenseNumber').required = isPickup;
+            document.getElementById('licenseFront').required = isPickup;
+            document.getElementById('licenseBack').required = isPickup;
+
+            if (!isPickup) {
+                document.getElementById('licenseNumber').value = '';
+                document.getElementById('licenseFront').value = '';
+                document.getElementById('licenseBack').value = '';
+            }
+
             // Set minimum date
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
@@ -867,6 +900,9 @@
             const preferredTime = document.getElementById('preferredTime').value;
             const notes = document.getElementById('notes').value;
             const currentMileage = document.getElementById('currentMileage').value;
+            const licenseNumber = document.getElementById('licenseNumber').value.trim();
+            const licenseFrontFile = document.getElementById('licenseFront').files[0];
+            const licenseBackFile = document.getElementById('licenseBack').files[0];
 
             const request = requestSystem.createRequest(currentCustomer.id, type, {
                 vehicleId,
@@ -875,7 +911,9 @@
                 notes,
                 currentMileage,
                 insurance: selectedInsurance,
-                equipment: selectedEquipment
+                licenseNumber,
+                licenseFrontName: licenseFrontFile ? licenseFrontFile.name : '',
+                licenseBackName: licenseBackFile ? licenseBackFile.name : ''
             });
 
             const vehicle = vehicleSystem.getVehicleById(vehicleId);
@@ -888,9 +926,10 @@
             document.getElementById('preferredTime').value = '';
             document.getElementById('notes').value = '';
             document.getElementById('currentMileage').value = '';
-            selectedEquipment = [];
+            document.getElementById('licenseNumber').value = '';
+            document.getElementById('licenseFront').value = '';
+            document.getElementById('licenseBack').value = '';
             selectedInsurance = 'INS-STD';
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
             openModal('successModal');
             setTimeout(() => showSection('requests'), 2000);

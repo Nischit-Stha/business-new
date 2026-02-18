@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Premium Car Rentals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        .payment-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .payment-method {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .payment-method.active {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .payment-method .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .payment-method .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        .card-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-preview .chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .card-preview .card-number {
+            font-size: 20px;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-preview .card-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .summary-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .summary-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .summary-item .value {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            border-top: 2px solid #667eea;
+            margin-top: 10px;
+        }
+
+        .btn-pay {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-pay:active {
+            transform: translateY(0);
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .security-badge::before {
+            content: '🔒';
+            font-size: 20px;
+        }
+
+        .rental-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .rental-details h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .detail-row .label {
+            color: #666;
+        }
+
+        .detail-row .value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 992px) {
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-methods {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Secure Payment</h1>
+            <p>Complete your car rental payment</p>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <div class="payment-grid">
+            <div class="payment-section">
+                <h2 class="section-title">Payment Method</h2>
+
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="card" onclick="selectPaymentMethod('card')">
+                        <div class="icon">💳</div>
+                        <div class="name">Credit Card</div>
+                    </div>
+                    <div class="payment-method" data-method="debit" onclick="selectPaymentMethod('debit')">
+                        <div class="icon">🏦</div>
+                        <div class="name">Debit Card</div>
+                    </div>
+                    <div class="payment-method" data-method="paypal" onclick="selectPaymentMethod('paypal')">
+                        <div class="icon">📱</div>
+                        <div class="name">PayPal</div>
+                    </div>
+                </div>
+
+                <div id="cardPaymentForm">
+                    <div class="card-preview">
+                        <div class="chip"></div>
+                        <div class="card-number" id="previewCardNumber">•••• •••• •••• ••••</div>
+                        <div class="card-info">
+                            <div>
+                                <div style="font-size: 10px; opacity: 0.8;">CARDHOLDER</div>
+                                <div id="previewCardName">YOUR NAME</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 10px; opacity: 0.8;">EXPIRES</div>
+                                <div id="previewCardExpiry">MM/YY</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cardholder Name</label>
+                        <input type="text" id="cardName" placeholder="John Smith" oninput="updateCardPreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this); updateCardPreview()">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Expiry Date</label>
+                            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this); updateCardPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text" id="cardCVV" placeholder="123" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Billing ZIP Code</label>
+                        <input type="text" id="zipCode" placeholder="12345">
+                    </div>
+                </div>
+
+                <div id="paypalForm" style="display: none;">
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">📱</div>
+                        <h3 style="color: #333; margin-bottom: 10px;">PayPal Payment</h3>
+                        <p style="color: #666; margin-bottom: 30px;">You will be redirected to PayPal to complete your payment</p>
+                        <button class="btn-pay" onclick="processPayPalPayment()">Continue to PayPal</button>
+                    </div>
+                </div>
+
+                <div class="security-badge">
+                    Your payment information is encrypted and secure. We never store your card details.
+                </div>
+            </div>
+
+            <div class="summary-section">
+                <h2 class="section-title">Booking Summary</h2>
+
+                <div class="rental-details">
+                    <h4>Rental Details</h4>
+                    <div class="detail-row">
+                        <span class="label">Vehicle:</span>
+                        <span class="value" id="vehicleName">Toyota Camry</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Pickup Date:</span>
+                        <span class="value" id="pickupDate">Feb 20, 2026</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Return Date:</span>
+                        <span class="value" id="returnDate">Feb 25, 2026</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Duration:</span>
+                        <span class="value" id="duration">5 days</span>
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Daily Rate</span>
+                    <span class="value" id="dailyRate">$65.00</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Number of Days</span>
+                    <span class="value" id="numDays">5</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Subtotal</span>
+                    <span class="value" id="subtotal">$325.00</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Insurance</span>
+                    <span class="value" id="insuranceFee">$64.95</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Equipment</span>
+                    <span class="value" id="equipmentFee">$25.00</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Taxes & Fees</span>
+                    <span class="value" id="taxesFees">$41.49</span>
+                </div>
+
+                <div class="summary-total">
+                    <span>Total Amount</span>
+                    <span id="totalAmount">$456.44</span>
+                </div>
+
+                <button class="btn-pay" onclick="processPayment()">
+                    Complete Payment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data-system-enhanced.js"></script>
+    <script src="auth-system.js"></script>
+    <script>
+        let selectedPaymentMethod = 'card';
+
+        // Check authentication
+        if (!authSystem.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Load booking data from URL params or localStorage
+        function loadBookingData() {
+            const params = new URLSearchParams(window.location.search);
+            const requestId = params.get('requestId');
+
+            if (requestId) {
+                const requests = JSON.parse(localStorage.getItem('rentalRequests') || '[]');
+                const request = requests.find(r => r.id === requestId);
+
+                if (request) {
+                    // Populate booking details
+                    document.getElementById('vehicleName').textContent = request.vehicleMake + ' ' + request.vehicleModel;
+                    document.getElementById('pickupDate').textContent = new Date(request.pickupDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    document.getElementById('returnDate').textContent = new Date(request.returnDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    
+                    const days = Math.ceil((new Date(request.returnDate) - new Date(request.pickupDate)) / (1000 * 60 * 60 * 24));
+                    document.getElementById('duration').textContent = `${days} day${days > 1 ? 's' : ''}`;
+                    document.getElementById('numDays').textContent = days;
+
+                    // Calculate costs
+                    const dailyRate = parseFloat(request.dailyRate || 65);
+                    const subtotal = dailyRate * days;
+                    const insuranceFee = parseFloat(request.insuranceCost || 12.99) * days;
+                    const equipmentFee = parseFloat(request.equipmentCost || 5) * days;
+                    const taxes = (subtotal + insuranceFee + equipmentFee) * 0.10;
+                    const total = subtotal + insuranceFee + equipmentFee + taxes;
+
+                    document.getElementById('dailyRate').textContent = '$' + dailyRate.toFixed(2);
+                    document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+                    document.getElementById('insuranceFee').textContent = '$' + insuranceFee.toFixed(2);
+                    document.getElementById('equipmentFee').textContent = '$' + equipmentFee.toFixed(2);
+                    document.getElementById('taxesFees').textContent = '$' + taxes.toFixed(2);
+                    document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+                }
+            }
+        }
+
+        loadBookingData();
+
+        // Select payment method
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('active');
+
+            // Show/hide payment forms
+            if (method === 'paypal') {
+                document.getElementById('cardPaymentForm').style.display = 'none';
+                document.getElementById('paypalForm').style.display = 'block';
+            } else {
+                document.getElementById('cardPaymentForm').style.display = 'block';
+                document.getElementById('paypalForm').style.display = 'none';
+            }
+        }
+
+        // Format card number
+        function formatCardNumber(input) {
+            let value = input.value.replace(/\s/g, '');
+            value = value.replace(/[^0-9]/g, '');
+            let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+            input.value = formatted;
+        }
+
+        // Format expiry date
+        function formatExpiry(input) {
+            let value = input.value.replace(/\//g, '');
+            value = value.replace(/[^0-9]/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            input.value = value;
+        }
+
+        // Update card preview
+        function updateCardPreview() {
+            const cardNumber = document.getElementById('cardNumber').value || '•••• •••• •••• ••••';
+            const cardName = document.getElementById('cardName').value.toUpperCase() || 'YOUR NAME';
+            const cardExpiry = document.getElementById('cardExpiry').value || 'MM/YY';
+
+            document.getElementById('previewCardNumber').textContent = cardNumber;
+            document.getElementById('previewCardName').textContent = cardName;
+            document.getElementById('previewCardExpiry').textContent = cardExpiry;
+        }
+
+        // Show alert
+        function showAlert(message, type = 'success') {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            alertBox.scrollIntoView({ behavior: 'smooth' });
+
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // Process payment
+        function processPayment() {
+            if (selectedPaymentMethod === 'paypal') {
+                processPayPalPayment();
+                return;
+            }
+
+            const cardName = document.getElementById('cardName').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardExpiry = document.getElementById('cardExpiry').value;
+            const cardCVV = document.getElementById('cardCVV').value;
+            const zipCode = document.getElementById('zipCode').value.trim();
+
+            // Validation
+            if (!cardName || !cardNumber || !cardExpiry || !cardCVV || !zipCode) {
+                showAlert('Please fill in all payment fields', 'error');
+                return;
+            }
+
+            if (cardNumber.length < 13) {
+                showAlert('Please enter a valid card number', 'error');
+                return;
+            }
+
+            if (cardCVV.length < 3) {
+                showAlert('Please enter a valid CVV', 'error');
+                return;
+            }
+
+            // Simulate payment processing
+            showAlert('Processing payment...', 'success');
+
+            setTimeout(() => {
+                showAlert('Payment successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'payment-success.html';
+                }, 2000);
+            }, 2000);
+        }
+
+        // Process PayPal payment
+        function processPayPalPayment() {
+            showAlert('Redirecting to PayPal...', 'success');
+            setTimeout(() => {
+                // In production, redirect to actual PayPal
+                window.location.href = 'payment-success.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

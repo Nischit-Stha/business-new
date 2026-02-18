@@ -23,6 +23,7 @@
                 <a href="#bookings" class="nav-link" data-tab="bookings">Bookings</a>
                 <a href="#fleet" class="nav-link" data-tab="fleet">Fleet</a>
                 <a href="#reports" class="nav-link" data-tab="reports">Reports</a>
+                <button onclick="logout()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: 600;">Logout</button>
             </nav>
         </div>
     </header>
@@ -87,6 +88,15 @@
                     <button class="btn btn-secondary" onclick="showDailyReport()">
                         📊 Daily Report
                     </button>
+                    <a href="admin-approvals.html" class="btn btn-primary" style="text-decoration: none;">
+                        ✅ Approve Requests
+                    </a>
+                    <a href="admin-inventory.html" class="btn btn-secondary" style="text-decoration: none;">
+                        🚗 Inventory Management
+                    </a>
+                    <a href="admin-analytics.html" class="btn btn-secondary" style="text-decoration: none;">
+                        📊 Analytics & Insights
+                    </a>
                 </div>
             </section>
 
@@ -295,6 +305,25 @@
     </div>
 
     <!-- Scripts -->
+    <script src="data-system-enhanced.js"></script>
+    <script src="auth-system.js"></script>
+    <script>
+        // Require admin authentication
+        if (!authSystem.requireAdminAuth()) {
+            throw new Error('Not authenticated');
+        }
+        
+        // Display admin user info
+        const adminUser = authSystem.getAdminUser();
+        if (adminUser) {
+            console.log('Logged in as:', adminUser.name, '(' + adminUser.role + ')');
+        }
+        
+        // Logout function
+        function logout() {
+            authSystem.adminLogout();
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script src="app.js"></script>
 </body>

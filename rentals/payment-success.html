@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Premium Car Rentals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 50px;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 50px;
+            animation: scaleIn 0.5s ease 0.3s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-container h1 {
+            color: #27ae60;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .success-container p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .booking-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .booking-details h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row .label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .detail-row .value {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .confirmation-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .confirmation-number small {
+            display: block;
+            font-size: 12px;
+            font-weight: normal;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            letter-spacing: normal;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f3ff;
+        }
+
+        .email-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 25px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .email-notice::before {
+            content: '📧';
+            font-size: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .success-container {
+                padding: 30px 20px;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your booking. Your car rental has been confirmed and you're all set!</p>
+
+        <div class="confirmation-number">
+            <small>Confirmation Number</small>
+            <span id="confirmationNumber">RNT-2026-12345</span>
+        </div>
+
+        <div class="booking-details">
+            <h3>Booking Summary</h3>
+            <div class="detail-row">
+                <span class="label">Vehicle:</span>
+                <span class="value" id="vehicleName">Toyota Camry 2024</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Pickup Date:</span>
+                <span class="value" id="pickupDate">Feb 20, 2026 at 10:00 AM</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Return Date:</span>
+                <span class="value" id="returnDate">Feb 25, 2026 at 10:00 AM</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Total Paid:</span>
+                <span class="value" id="totalPaid">$456.44</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Payment Method:</span>
+                <span class="value">Card ending in 3456</span>
+            </div>
+        </div>
+
+        <div class="email-notice">
+            A confirmation email with all booking details has been sent to your registered email address.
+        </div>
+
+        <div class="action-buttons">
+            <a href="customer-portal.html" class="btn btn-secondary">View My Bookings</a>
+            <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
+        </div>
+    </div>
+
+    <script src="auth-system.js"></script>
+    <script>
+        // Check authentication
+        if (!authSystem.isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Generate confirmation number
+        function generateConfirmationNumber() {
+            const year = new Date().getFullYear();
+            const random = Math.floor(Math.random() * 90000) + 10000;
+            return `RNT-${year}-${random}`;
+        }
+
+        // Set confirmation number
+        document.getElementById('confirmationNumber').textContent = generateConfirmationNumber();
+
+        // Get user info
+        const user = authSystem.getCurrentUser();
+        if (user) {
+            // Could populate with actual booking data here
+            console.log('Booking confirmed for:', user.name);
+        }
+
+        // Auto-redirect to portal after 10 seconds
+        setTimeout(() => {
+            const countdown = 10;
+            let remaining = countdown;
+            
+            const notice = document.createElement('p');
+            notice.style.marginTop = '20px';
+            notice.style.color = '#999';
+            notice.style.fontSize = '14px';
+            notice.innerHTML = `Redirecting to your bookings in <span id="countdown">${remaining}</span> seconds...`;
+            document.querySelector('.success-container').appendChild(notice);
+
+            const interval = setInterval(() => {
+                remaining--;
+                document.getElementById('countdown').textContent = remaining;
+                
+                if (remaining <= 0) {
+                    clearInterval(interval);
+                    window.location.href = 'customer-portal.html';
+                }
+            }, 1000);
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STARR365 - Customer Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #fbbf24;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-400: #cbd5e0;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #1e3a8a 100%);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--dark);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            color: var(--accent);
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CAR CATALOG SECTION ===== */
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .car-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        .car-details {
+            padding: 1.5rem;
+        }
+
+        .car-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .car-year {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .car-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem 0;
+            border-top: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .spec {
+            font-size: 0.85rem;
+        }
+
+        .spec-label {
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .spec-value {
+            color: var(--dark);
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .car-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .daily-rate {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .btn-request {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-request:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        /* ===== REQUEST FORM ===== */
+        .request-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 700px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.02);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-cancel {
+            background: var(--gray-200);
+            color: var(--dark);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* ===== MY REQUESTS SECTION ===== */
+        .requests-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .request-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--gray-400);
+        }
+
+        .request-card.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .request-card.approved {
+            border-left-color: var(--success);
+        }
+
+        .request-card.denied {
+            border-left-color: var(--danger);
+        }
+
+        .request-card.completed {
+            border-left-color: var(--primary-light);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .request-id {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.denied {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.completed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .request-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem 0;
+            border-top: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .info-item {
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: var(--dark);
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .request-location {
+            background: var(--gray-100);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .location-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .location-details {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-600);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: space-around;
+                gap: 1rem;
+            }
+
+            .car-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .request-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            color: var(--gray-600);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">⭐ STARR365</div>
+            <div class="nav-links">
+                <a onclick="showSection('catalog')" class="nav-link active">🚗 Cars</a>
+                <a onclick="showSection('requests')" class="nav-link">📋 My Requests</a>
+                <a onclick="showSection('account')" class="nav-link">👤 Account</a>
+            </div>
+            <div class="user-section">
+                <div>
+                    <div class="user-name" id="currentCustomerName">James Wilson</div>
+                </div>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- CATALOG SECTION -->
+        <div id="catalog-section" class="section active">
+            <h1 class="section-title">🚗 Available Vehicles</h1>
+            <p class="section-subtitle">Choose your perfect car for your next journey</p>
+            <div class="car-grid" id="car-catalog"></div>
+        </div>
+
+        <!-- REQUEST FORM SECTION -->
+        <div id="request-form-section" class="section">
+            <h1 class="section-title">📝 New Request</h1>
+            <form class="request-form" onsubmit="submitRequest(event)">
+                <div class="form-group">
+                    <label>Request Type *</label>
+                    <select id="requestType" required onchange="updateFormFields()">
+                        <option value="">Select...</option>
+                        <option value="pickup">Pick-up New Vehicle</option>
+                        <option value="swap">Swap Current Vehicle</option>
+                        <option value="dropoff">Drop-off Vehicle</option>
+                    </select>
+                </div>
+
+                <div id="selectVehicleField" class="form-group">
+                    <label>Vehicle *</label>
+                    <select id="selectedVehicle" required>
+                        <option value="">Select a vehicle...</option>
+                    </select>
+                </div>
+
+                <div id="currentVehicleField" class="form-group" style="display:none;">
+                    <label>Current Vehicle Mileage *</label>
+                    <input type="number" id="currentMileage" placeholder="Odometer reading">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Preferred Date *</label>
+                        <input type="date" id="preferredDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Time *</label>
+                        <input type="time" id="preferredTime" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="notes" placeholder="Any special requests or issues..."></textarea>
+                </div>
+
+                <!-- INSURANCE SELECTION -->
+                <div class="form-group">
+                    <label>Insurance Plan (Select One) *</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 0.75rem;">
+                        <div style="padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center;" onclick="selectInsurance('INS-BASIC')" id="ins-basic">
+                            <div style="font-weight: 700; color: #1e293b;">Basic</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">$0/day<br>$2500 deductible</div>
+                        </div>
+                        <div style="padding: 1rem; border: 2px solid #3b82f6; border-radius: 8px; cursor: pointer; text-align: center; background: rgba(59, 130, 246, 0.05);" onclick="selectInsurance('INS-STD')" id="ins-std">
+                            <div style="font-weight: 700; color: #1e293b;">Standard ✓</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">$12.99/day<br>$750 deductible</div>
+                        </div>
+                        <div style="padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center;" onclick="selectInsurance('INS-PREM')" id="ins-prem">
+                            <div style="font-weight: 700; color: #1e293b;">Premium</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">$19.99/day<br>$250 deductible</div>
+                        </div>
+                        <div style="padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center;" onclick="selectInsurance('INS-SUPER')" id="ins-super">
+                            <div style="font-weight: 700; color: #1e293b;">Super</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">$29.99/day<br>$0 deductible</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EQUIPMENT OPTIONS -->
+                <div class="form-group">
+                    <label>Optional Equipment</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 0.75rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            <input type="checkbox" value="EQ-GPS" onchange="toggleEquipment(this)"> 🗺️ GPS ($5/day)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            <input type="checkbox" value="EQ-CS" onchange="toggleEquipment(this)"> 👶 Child Seat ($8/day)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            <input type="checkbox" value="EQ-BS" onchange="toggleEquipment(this)"> 🪑 Booster Seat ($6/day)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            <input type="checkbox" value="EQ-WIFI" onchange="toggleEquipment(this)"> 📡 WiFi Hotspot ($4/day)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            <input type="checkbox" value="EQ-RR" onchange="toggleEquipment(this)"> 🏗️ Roof Rack ($10/day)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            <input type="checkbox" value="EQ-SKI" onchange="toggleEquipment(this)"> ⛷️ Ski Rack ($12/day)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- COST BREAKDOWN -->
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 1rem;">💰 Estimated Cost Breakdown</div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                        <span>Vehicle Daily Rate</span>
+                        <span id="costVehicle">$0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                        <span>Insurance</span>
+                        <span id="costInsurance">$0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                        <span>Equipment</span>
+                        <span id="costEquipment">$0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; font-weight: 700; color: #10b981; font-size: 1.1rem;">
+                        <span>Total Estimated</span>
+                        <span id="costTotal">$0</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn-submit">Submit Request</button>
+                    <button type="button" class="btn-cancel" onclick="showSection('catalog')">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- MY REQUESTS SECTION -->
+        <div id="requests-section" class="section">
+            <h1 class="section-title">📋 My Requests</h1>
+            <div id="my-requests-container" class="requests-list"></div>
+        </div>
+
+        <!-- ACCOUNT SECTION -->
+        <div id="account-section" class="section">
+            <h1 class="section-title">👤 My Account</h1>
+            <div class="request-form">
+                <div id="account-details"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-header">✅ Request Submitted!</h2>
+            <p id="successMessage"></p>
+            <button class="btn-submit" onclick="closeModal('successModal'); showSection('requests')">View My Requests</button>
+        </div>
+    </div>
+
+    <script src="data-system-enhanced.js"></script>
+    <script src="auth-system.js"></script>
+    <script>
+        // ===== REQUIRE AUTHENTICATION =====
+        if (!authSystem.requireAuth()) {
+            throw new Error('Not authenticated');
+        }
+        
+        // ===== CURRENT CUSTOMER =====
+        let currentCustomer = authSystem.getCurrentUser();
+        
+        // Store selected insurance and equipment
+        let selectedInsurance = 'INS-STD';
+        let selectedEquipment = [];
+
+        // ===== UI FUNCTIONS =====
+        function selectInsurance(insId) {
+            selectedInsurance = insId;
+            // Update UI
+            document.querySelectorAll('[id^="ins-"]').forEach(el => {
+                el.style.borderColor = '#e2e8f0';
+                el.style.background = 'white';
+            });
+            const selectedEl = document.getElementById('ins-' + insId.split('-')[1].toLowerCase());
+            if (selectedEl) {
+                selectedEl.style.borderColor = '#3b82f6';
+                selectedEl.style.background = 'rgba(59, 130, 246, 0.05)';
+            }
+            calculateCost();
+        }
+
+        function toggleEquipment(checkbox) {
+            if (checkbox.checked) {
+                selectedEquipment.push(checkbox.value);
+            } else {
+                selectedEquipment = selectedEquipment.filter(e => e !== checkbox.value);
+            }
+            calculateCost();
+        }
+
+        function calculateCost() {
+            const vehicleId = document.getElementById('selectedVehicle').value;
+            const vehicle = vehicleSystem.getVehicleById(vehicleId);
+            const preferredDate = document.getElementById('preferredDate').value;
+
+            if (!vehicle || !preferredDate) {
+                document.getElementById('costVehicle').textContent = '$0';
+                document.getElementById('costInsurance').textContent = '$0';
+                document.getElementById('costEquipment').textContent = '$0';
+                document.getElementById('costTotal').textContent = '$0';
+                return;
+            }
+
+            // Calculate days
+            const startDate = new Date(preferredDate);
+            const today = new Date();
+            const days = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24)) || 1;
+
+            // Vehicle cost
+            const vehicleCost = vehicle.dailyRate * days;
+            document.getElementById('costVehicle').textContent = '$' + vehicleCost.toFixed(2);
+
+            // Insurance cost
+            const insCode = selectedInsurance.split('-')[1];
+            const insuranceObj = Object.values(INSURANCE_PLANS).find(i => i.id === selectedInsurance);
+            const insuranceCost = (insuranceObj.dailyRate * days);
+            document.getElementById('costInsurance').textContent = '$' + insuranceCost.toFixed(2);
+
+            // Equipment cost
+            let equipmentCost = 0;
+            selectedEquipment.forEach(eqId => {
+                const eq = Object.values(EQUIPMENT).find(e => e.id === eqId);
+                if (eq) equipmentCost += eq.dailyRate * days;
+            });
+            document.getElementById('costEquipment').textContent = '$' + equipmentCost.toFixed(2);
+
+            // Total
+            const total = vehicleCost + insuranceCost + equipmentCost;
+            document.getElementById('costTotal').textContent = '$' + total.toFixed(2);
+        }
+
+        // ===== UI FUNCTIONS =====
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+            // Show selected section
+            const section = document.getElementById(sectionId + '-section');
+            if (section) section.classList.add('active');
+
+            // Active navigation
+            event.target.classList.add('active');
+
+            // Load data for specific sections
+            if (sectionId === 'catalog') loadCatalog();
+            if (sectionId === 'requests') loadMyRequests();
+            if (sectionId === 'account') loadAccountDetails();
+        }
+
+        // ===== LOAD CATALOG =====
+        function loadCatalog() {
+            const vehicles = vehicleSystem.getAvailableVehicles();
+            const catalog = document.getElementById('car-catalog');
+
+            if (vehicles.length === 0) {
+                catalog.innerHTML = '<div class="empty-state"><div class="empty-icon">🚫</div><p>No vehicles available at the moment.</p></div>';
+                return;
+            }
+
+            catalog.innerHTML = vehicles.map(car => `
+                <div class="car-card">
+                    <div class="car-image">🚗</div>
+                    <div class="car-details">
+                        <div class="car-title">${car.make} ${car.model}</div>
+                        <div class="car-year">${car.year}</div>
+                        
+                        <div class="car-specs">
+                            <div class="spec">
+                                <div class="spec-label">Transmission</div>
+                                <div class="spec-value">${car.transmission}</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Fuel</div>
+                                <div class="spec-value">${car.fuel}</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Range</div>
+                                <div class="spec-value">${car.range}</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Color</div>
+                                <div class="spec-value">${car.color}</div>
+                            </div>
+                        </div>
+
+                        <div class="car-price">
+                            <div class="daily-rate">$${car.dailyRate}/day</div>
+                            <button class="btn-request" onclick="selectCar('${car.id}')">Request</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== SELECT CAR =====
+        function selectCar(vehicleId) {
+            // Set request type to pickup if not set
+            const typeSelect = document.getElementById('requestType');
+            if (!typeSelect.value) {
+                typeSelect.value = 'pickup';
+                updateFormFields();
+            }
+
+            // Update selected vehicle
+            document.getElementById('selectedVehicle').value = vehicleId;
+
+            // Set minimum date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('preferredDate').min = tomorrow.toISOString().split('T')[0];
+            document.getElementById('preferredDate').value = tomorrow.toISOString().split('T')[0];
+
+            // Set default time to 10:00 AM
+            document.getElementById('preferredTime').value = '10:00';
+
+            // Calculate cost
+            calculateCost();
+
+            // Scroll to form
+            showSection('request-form');
+            setTimeout(() => {
+                document.getElementById('request-form-section').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        // ===== UPDATE FORM FIELDS =====
+        function updateFormFields() {
+            const type = document.getElementById('requestType').value;
+            const currentVehicleField = document.getElementById('currentVehicleField');
+            const vehicles = vehicleSystem.getAvailableVehicles();
+            const vehicleSelect = document.getElementById('selectedVehicle');
+
+            // Update vehicle options based on request type
+            let html = '<option value="">Select a vehicle...</option>';
+            if (type === 'pickup' || type === 'swap') {
+                vehicles.forEach(v => {
+                    html += `<option value="${v.id}">${v.make} ${v.model} (${v.year}) - $${v.dailyRate}/day</option>`;
+                });
+            }
+            vehicleSelect.innerHTML = html;
+
+            // Show/hide current vehicle field
+            if (type === 'swap' || type === 'dropoff') {
+                currentVehicleField.style.display = 'block';
+            } else {
+                currentVehicleField.style.display = 'none';
+            }
+
+            // Set minimum date
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('preferredDate').min = tomorrow.toISOString().split('T')[0];
+        }
+
+        // ===== SUBMIT REQUEST =====
+        function submitRequest(e) {
+            e.preventDefault();
+
+            const type = document.getElementById('requestType').value;
+            const vehicleId = document.getElementById('selectedVehicle').value;
+            const preferredDate = document.getElementById('preferredDate').value;
+            const preferredTime = document.getElementById('preferredTime').value;
+            const notes = document.getElementById('notes').value;
+            const currentMileage = document.getElementById('currentMileage').value;
+
+            const request = requestSystem.createRequest(currentCustomer.id, type, {
+                vehicleId,
+                preferredDate,
+                preferredTime,
+                notes,
+                currentMileage,
+                insurance: selectedInsurance,
+                equipment: selectedEquipment
+            });
+
+            const vehicle = vehicleSystem.getVehicleById(vehicleId);
+            document.getElementById('successMessage').textContent = 
+                `Your ${type} request (${request.id.substring(0, 12)}) for ${vehicle.year} ${vehicle.make} ${vehicle.model} has been submitted!\n\nEstimated Cost: $${request.estimatedCost}\n\nYou'll receive an email once it's approved.`;
+
+            document.getElementById('requestType').value = '';
+            document.getElementById('selectedVehicle').value = '';
+            document.getElementById('preferredDate').value = '';
+            document.getElementById('preferredTime').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('currentMileage').value = '';
+            selectedEquipment = [];
+            selectedInsurance = 'INS-STD';
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            openModal('successModal');
+            setTimeout(() => showSection('requests'), 2000);
+        }
+
+        // ===== LOAD MY REQUESTS =====
+        function loadMyRequests() {
+            const requests = requestSystem.getCustomerRequests(currentCustomer.id);
+            const container = document.getElementById('my-requests-container');
+
+            if (requests.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>You haven\'t made any requests yet.</p></div>';
+                return;
+            }
+
+            container.innerHTML = requests.map(req => {
+                const vehicle = vehicleSystem.getVehicleById(req.vehicleId);
+                return `
+                    <div class="request-card ${req.status}">
+                        <div class="request-header">
+                            <div class="request-id">${req.id}</div>
+                            <span class="status-badge ${req.status}">${req.status.toUpperCase()}</span>
+                        </div>
+
+                        <div class="request-info">
+                            <div class="info-item">
+                                <div class="info-label">Type</div>
+                                <div class="info-value">${req.type.toUpperCase()}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Vehicle</div>
+                                <div class="info-value">${vehicle ? vehicle.make + ' ' + vehicle.model : 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Requested Date</div>
+                                <div class="info-value">${new Date(req.preferredDate).toLocaleDateString()}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Requested Time</div>
+                                <div class="info-value">${req.preferredTime}</div>
+                            </div>
+                        </div>
+
+                        ${req.status === 'approved' ? `
+                            <div class="request-location">
+                                <div class="location-label">📍 Meeting Location & Time</div>
+                                <div class="location-details">
+                                    <strong>Location:</strong> ${req.approvalLocation}<br>
+                                    <strong>Time:</strong> ${new Date(req.approvalTime).toLocaleString()}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${req.status === 'denied' ? `
+                            <div style="background: #fee2e2; padding: 1rem; border-radius: 6px; margin-top: 1rem; color: #991b1b;">
+                                <strong>Request Denied</strong><br>
+                                Please contact support for more information.
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== LOAD ACCOUNT DETAILS =====
+        function loadAccountDetails() {
+            document.getElementById('account-details').innerHTML = `
+                <div style="display: grid; gap: 1rem;">
+                    <div>
+                        <div style="color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem;">Name</div>
+                        <div style="font-size: 1.1rem;">${currentCustomer.name}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem;">Email</div>
+                        <div>${currentCustomer.email}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem;">Phone</div>
+                        <div>${currentCustomer.phone}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem;">License Number</div>
+                        <div>${currentCustomer.licenseNumber}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem;">Total Rentals</div>
+                        <div>${currentCustomer.totalRentals}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem;">Member Since</div>
+                        <div>${new Date(currentCustomer.registeredDate).toLocaleDateString()}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // ===== LOGOUT =====
+        function logout() {
+            authSystem.logout();
+        }
+
+        // ===== INITIALIZE =====
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('currentCustomerName').textContent = currentCustomer.name;
+            loadCatalog();
+        });
+    </script>
+</body>
+</html>

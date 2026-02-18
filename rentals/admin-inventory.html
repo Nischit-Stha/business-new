@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STARR365 - Vehicle Inventory Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #fbbf24;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #1e3a8a 100%);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--dark);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 2rem;
+        }
+
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .filter-select {
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+        }
+
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .vehicle-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vehicle-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .vehicle-id {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .vehicle-body {
+            padding: 1.5rem;
+        }
+
+        .vehicle-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .spec {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .spec-label {
+            color: var(--gray-600);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .spec-value {
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .vehicle-price {
+            background: var(--gray-100);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price-label {
+            color: var(--gray-600);
+            font-size: 0.85rem;
+        }
+
+        .vehicle-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-edit {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .btn-status {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-600);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.02);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-submit {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-cancel {
+            background: var(--gray-200);
+            color: var(--dark);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 12px;
+            color: var(--gray-600);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: unset;
+            }
+
+            .vehicle-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <div class="logo">⭐ STARR365 ADMIN</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Vehicle Inventory Management</div>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">← Main Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <h1 class="page-title">🚗 Vehicle Inventory</h1>
+        <p class="page-subtitle">Manage your fleet - add, edit, and monitor vehicle status</p>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by make, model, or rego...">
+            </div>
+            <select id="filterStatus" class="filter-select">
+                <option value="">All Status</option>
+                <option value="available">Available</option>
+                <option value="in-use">In Use</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="reserved">Reserved</option>
+            </select>
+            <select id="filterCategory" class="filter-select">
+                <option value="">All Categories</option>
+                <option value="Economy">Economy</option>
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Luxury">Luxury</option>
+                <option value="Van">Van</option>
+                <option value="Truck">Truck</option>
+            </select>
+            <button class="btn-add" onclick="openAddModal()">+ Add Vehicle</button>
+        </div>
+
+        <!-- VEHICLE GRID -->
+        <div class="vehicle-grid" id="vehicleGrid"></div>
+    </div>
+
+    <!-- ADD/EDIT MODAL -->
+    <div id="vehicleModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <h2 class="modal-header" id="modalTitle">Add New Vehicle</h2>
+            
+            <form onsubmit="saveVehicle(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Make *</label>
+                        <input type="text" id="formMake" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Model *</label>
+                        <input type="text" id="formModel" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Year *</label>
+                        <input type="number" id="formYear" min="2000" max="2030" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rego (License Plate) *</label>
+                        <input type="text" id="formRego" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="formCategory" required>
+                            <option value="">Select...</option>
+                            <option value="Economy">Economy</option>
+                            <option value="Compact">Compact</option>
+                            <option value="Sedan">Sedan</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Luxury">Luxury</option>
+                            <option value="Van">Van</option>
+                            <option value="Truck">Truck</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Transmission *</label>
+                        <select id="formTransmission" required>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                            <option value="CVT">CVT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fuel Type *</label>
+                        <input type="text" id="formFuel" placeholder="e.g., Petrol, Hybrid, Electric" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Range (km) *</label>
+                        <input type="text" id="formRange" placeholder="e.g., 600 km" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Color *</label>
+                        <input type="text" id="formColor" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mileage *</label>
+                        <input type="number" id="formMileage" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Daily Rate ($) *</label>
+                        <input type="number" id="formDailyRate" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Seats *</label>
+                        <input type="number" id="formSeats" min="1" max="8" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Trunk Space (L) *</label>
+                        <input type="text" id="formTrunk" placeholder="e.g., 500L" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="formDescription" placeholder="e.g., Premium sedan with luxury features">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Save Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- STATUS MODAL -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeStatusModal()">✕</button>
+            <h2 class="modal-header">Change Vehicle Status</h2>
+            
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label>New Status</label>
+                <select id="newStatus" class="filter-select">
+                    <option value="available">Available</option>
+                    <option value="in-use">In Use</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="reserved">Reserved</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeStatusModal()">Cancel</button>
+                <button class="btn-submit" onclick="updateVehicleStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data-system-enhanced.js"></script>
+    <script src="auth-system.js"></script>
+    <script>
+        // Require admin authentication
+        if (!authSystem.requireAdminAuth()) {
+            throw new Error('Not authenticated');
+        }
+    </script>
+    <script>
+        let currentEditId = null;
+        let currentStatusId = null;
+
+        function loadVehicles(filter = {}) {
+            const vehicles = vehicleSystem.getAllVehicles();
+            const grid = document.getElementById('vehicleGrid');
+
+            let filtered = vehicles;
+
+            // Apply status filter
+            if (filter.status) {
+                filtered = filtered.filter(v => v.status === filter.status);
+            }
+
+            // Apply category filter
+            if (filter.category) {
+                filtered = filtered.filter(v => v.category === filter.category);
+            }
+
+            // Apply search filter
+            if (filter.search) {
+                const search = filter.search.toLowerCase();
+                filtered = filtered.filter(v => 
+                    v.make.toLowerCase().includes(search) ||
+                    v.model.toLowerCase().includes(search) ||
+                    v.rego.toLowerCase().includes(search)
+                );
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🚗</div><p>No vehicles found.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(vehicle => `
+                <div class="vehicle-card">
+                    <div class="vehicle-header">
+                        <div>
+                            <div class="vehicle-name">${vehicle.make} ${vehicle.model}</div>
+                            <div class="vehicle-id">${vehicle.rego}</div>
+                        </div>
+                        <span class="status-badge">${vehicle.status}</span>
+                    </div>
+                    <div class="vehicle-body">
+                        <div class="vehicle-specs">
+                            <div class="spec">
+                                <div class="spec-label">Year</div>
+                                <div class="spec-value">${vehicle.year}</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Fuel</div>
+                                <div class="spec-value">${vehicle.fuel}</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Trans.</div>
+                                <div class="spec-value">${vehicle.transmission}</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Seats</div>
+                                <div class="spec-value">${vehicle.seats}</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Mileage</div>
+                                <div class="spec-value">${vehicle.mileage.toLocaleString()} km</div>
+                            </div>
+                            <div class="spec">
+                                <div class="spec-label">Range</div>
+                                <div class="spec-value">${vehicle.range}</div>
+                            </div>
+                        </div>
+
+                        <div class="vehicle-price">
+                            <div class="price-label">Daily Rate</div>
+                            <div class="price">$${vehicle.dailyRate}</div>
+                        </div>
+
+                        <div class="vehicle-actions">
+                            <button class="btn-small btn-edit" onclick="openEditModal('${vehicle.id}')">Edit</button>
+                            <button class="btn-small btn-status" onclick="openStatusModal('${vehicle.id}')">Status</button>
+                            <button class="btn-small btn-delete" onclick="deleteVehicle('${vehicle.id}')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAddModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Vehicle';
+            document.getElementById('formMake').value = '';
+            document.getElementById('formModel').value = '';
+            document.getElementById('formYear').value = new Date().getFullYear();
+            document.getElementById('formRego').value = '';
+            document.getElementById('formCategory').value = '';
+            document.getElementById('formTransmission').value = 'Automatic';
+            document.getElementById('formFuel').value = '';
+            document.getElementById('formRange').value = '';
+            document.getElementById('formColor').value = '';
+            document.getElementById('formMileage').value = '0';
+            document.getElementById('formDailyRate').value = '';
+            document.getElementById('formSeats').value = '5';
+            document.getElementById('formTrunk').value = '';
+            document.getElementById('formDescription').value = '';
+            document.getElementById('vehicleModal').classList.add('active');
+        }
+
+        function openEditModal(vehicleId) {
+            const vehicle = vehicleSystem.getVehicleById(vehicleId);
+            if (!vehicle) return;
+
+            currentEditId = vehicleId;
+            document.getElementById('modalTitle').textContent = 'Edit Vehicle';
+            document.getElementById('formMake').value = vehicle.make;
+            document.getElementById('formModel').value = vehicle.model;
+            document.getElementById('formYear').value = vehicle.year;
+            document.getElementById('formRego').value = vehicle.rego;
+            document.getElementById('formCategory').value = vehicle.category;
+            document.getElementById('formTransmission').value = vehicle.transmission;
+            document.getElementById('formFuel').value = vehicle.fuel;
+            document.getElementById('formRange').value = vehicle.range;
+            document.getElementById('formColor').value = vehicle.color;
+            document.getElementById('formMileage').value = vehicle.mileage;
+            document.getElementById('formDailyRate').value = vehicle.dailyRate;
+            document.getElementById('formSeats').value = vehicle.seats;
+            document.getElementById('formTrunk').value = vehicle.trunk;
+            document.getElementById('formDescription').value = vehicle.description || '';
+            document.getElementById('vehicleModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('vehicleModal').classList.remove('active');
+            currentEditId = null;
+        }
+
+        function saveVehicle(e) {
+            e.preventDefault();
+
+            const vehicleData = {
+                make: document.getElementById('formMake').value,
+                model: document.getElementById('formModel').value,
+                year: parseInt(document.getElementById('formYear').value),
+                rego: document.getElementById('formRego').value,
+                category: document.getElementById('formCategory').value,
+                transmission: document.getElementById('formTransmission').value,
+                fuel: document.getElementById('formFuel').value,
+                range: document.getElementById('formRange').value,
+                color: document.getElementById('formColor').value,
+                mileage: parseInt(document.getElementById('formMileage').value),
+                dailyRate: parseFloat(document.getElementById('formDailyRate').value),
+                seats: parseInt(document.getElementById('formSeats').value),
+                trunk: document.getElementById('formTrunk').value,
+                description: document.getElementById('formDescription').value,
+                features: ['Climate control', 'Backup camera']
+            };
+
+            if (currentEditId) {
+                vehicleSystem.updateVehicle(currentEditId, vehicleData);
+                alert('✅ Vehicle updated successfully!');
+            } else {
+                vehicleSystem.addVehicle(vehicleData);
+                alert('✅ Vehicle added to fleet!');
+            }
+
+            closeModal();
+            loadVehicles(getFilters());
+        }
+
+        function openStatusModal(vehicleId) {
+            currentStatusId = vehicleId;
+            const vehicle = vehicleSystem.getVehicleById(vehicleId);
+            document.getElementById('newStatus').value = vehicle.status;
+            document.getElementById('statusModal').classList.add('active');
+        }
+
+        function closeStatusModal() {
+            document.getElementById('statusModal').classList.remove('active');
+            currentStatusId = null;
+        }
+
+        function updateVehicleStatus() {
+            const newStatus = document.getElementById('newStatus').value;
+            vehicleSystem.updateVehicleStatus(currentStatusId, newStatus);
+            alert('✅ Vehicle status updated!');
+            closeStatusModal();
+            loadVehicles(getFilters());
+        }
+
+        function deleteVehicle(vehicleId) {
+            if (!confirm('Are you sure you want to delete this vehicle?')) return;
+            vehicleSystem.deleteVehicle(vehicleId);
+            alert('🗑️ Vehicle deleted from inventory');
+            loadVehicles(getFilters());
+        }
+
+        function getFilters() {
+            return {
+                search: document.getElementById('searchInput').value,
+                status: document.getElementById('filterStatus').value,
+                category: document.getElementById('filterCategory').value
+            };
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', () => loadVehicles(getFilters()));
+        document.getElementById('filterStatus').addEventListener('change', () => loadVehicles(getFilters()));
+        document.getElementById('filterCategory').addEventListener('change', () => loadVehicles(getFilters()));
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVehicles();
+        });
+    </script>
+</body>
+</html>

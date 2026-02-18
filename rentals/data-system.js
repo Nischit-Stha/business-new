@@ -186,6 +186,8 @@ class RequestManagementSystem {
             preferredDate: details.preferredDate,
             preferredTime: details.preferredTime,
             currentMileage: details.currentMileage || null,
+            regoNumber: details.regoNumber || '',
+            availableFrom: details.availableFrom || '',
             licenseNumber: details.licenseNumber || '',
             licenseFrontName: details.licenseFrontName || '',
             licenseBackName: details.licenseBackName || '',

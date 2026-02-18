@@ -387,6 +387,8 @@ class RequestManagementSystem {
             preferredDate: details.preferredDate,
             preferredTime: details.preferredTime,
             currentMileage: details.currentMileage || null,
+            regoNumber: details.regoNumber || '',
+            availableFrom: details.availableFrom || '',
             licenseNumber: details.licenseNumber || '',
             licenseFrontName: details.licenseFrontName || '',
             licenseBackName: details.licenseBackName || '',
@@ -626,7 +628,12 @@ class VehicleManagementSystem {
 
     getAvailableVehicles() {
         const fleet = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-        return fleet.filter(v => v.status === VEHICLE_STATUS.AVAILABLE);
+        const today = new Date().toISOString().split('T')[0];
+        return fleet.filter(v => {
+            if (v.status !== VEHICLE_STATUS.AVAILABLE) return false;
+            if (!v.availableFrom) return true;
+            return v.availableFrom <= today;
+        });
     }
 
     getAllVehicles() {

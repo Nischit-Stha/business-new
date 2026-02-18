@@ -577,6 +577,11 @@
                     <input type="number" id="currentMileage" placeholder="Odometer reading">
                 </div>
 
+                <div id="regoField" class="form-group" style="display:none;">
+                    <label>Rego Number *</label>
+                    <input type="text" id="regoNumber" placeholder="Enter rego number">
+                </div>
+
                 <div id="licenseFields" class="form-group" style="display:none;">
                     <label>Driver License Number *</label>
                     <input type="text" id="licenseNumber" placeholder="Enter license number">
@@ -865,6 +870,8 @@
             const currentVehicleField = document.getElementById('currentVehicleField');
             const selectVehicleField = document.getElementById('selectVehicleField');
             const selectedVehicle = document.getElementById('selectedVehicle');
+            const regoField = document.getElementById('regoField');
+            const regoNumber = document.getElementById('regoNumber');
             const licenseFields = document.getElementById('licenseFields');
             const licensePhotos = document.getElementById('licensePhotos');
             const contactFields = document.getElementById('contactFields');
@@ -893,6 +900,14 @@
             selectedVehicle.required = needsVehicle;
             if (!needsVehicle) {
                 selectedVehicle.value = '';
+            }
+
+            // Show/hide rego field for drop-off
+            const isDropoff = type === 'dropoff';
+            regoField.style.display = isDropoff ? 'block' : 'none';
+            regoNumber.required = isDropoff;
+            if (!isDropoff) {
+                regoNumber.value = '';
             }
 
             // Show/hide license fields for pickup
@@ -955,11 +970,12 @@
             }
 
             const type = document.getElementById('requestType').value;
-            const vehicleId = document.getElementById('selectedVehicle').value;
+            const selectedVehicleId = document.getElementById('selectedVehicle').value;
             const preferredDate = document.getElementById('preferredDate').value;
             const preferredTime = document.getElementById('preferredTime').value;
             const notes = document.getElementById('notes').value;
             const currentMileage = document.getElementById('currentMileage').value;
+            const regoNumber = document.getElementById('regoNumber').value.trim();
             const licenseNumber = document.getElementById('licenseNumber').value.trim();
             const licenseFrontFile = document.getElementById('licenseFront').files[0];
             const licenseBackFile = document.getElementById('licenseBack').files[0];
@@ -989,12 +1005,36 @@
                 }
             }
 
+            let resolvedVehicleId = selectedVehicleId;
+            let availableFrom = '';
+
+            if (type === 'dropoff') {
+                const fleet = vehicleSystem.getAllVehicles();
+                const matchedVehicle = fleet.find(v => (v.rego || '').toLowerCase() === regoNumber.toLowerCase());
+                if (!matchedVehicle) {
+                    alert('Rego not found in the system. Please check and try again.');
+                    return;
+                }
+                resolvedVehicleId = matchedVehicle.id;
+
+                const dropoffDate = preferredDate ? new Date(preferredDate) : new Date();
+                dropoffDate.setDate(dropoffDate.getDate() + 1);
+                availableFrom = dropoffDate.toISOString().split('T')[0];
+
+                vehicleSystem.updateVehicle(matchedVehicle.id, {
+                    status: 'available',
+                    availableFrom: availableFrom
+                });
+            }
+
             const request = requestSystem.createRequest(currentCustomer.id, type, {
-                vehicleId,
+                vehicleId: resolvedVehicleId,
                 preferredDate,
                 preferredTime,
                 notes,
                 currentMileage,
+                regoNumber,
+                availableFrom,
                 licenseNumber,
                 licenseFrontName: licenseFrontFile ? licenseFrontFile.name : '',
                 licenseBackName: licenseBackFile ? licenseBackFile.name : '',
@@ -1014,10 +1054,12 @@
                         customerId: currentCustomer.id,
                         type,
                         status: 'pending',
-                        vehicleId,
+                        vehicleId: resolvedVehicleId,
                         preferredDate,
                         preferredTime,
                         currentMileage,
+                        regoNumber,
+                        availableFrom,
                         notes,
                         createdAt: serverTimestamp(),
                         createdAtIso: new Date().toISOString(),
@@ -1034,7 +1076,7 @@
                 }
             }
 
-            const vehicle = vehicleSystem.getVehicleById(vehicleId);
+            const vehicle = resolvedVehicleId ? vehicleSystem.getVehicleById(resolvedVehicleId) : null;
             const vehicleLabel = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'the selected vehicle';
             const estimatedCost = typeof request.estimatedCost === 'number' ? request.estimatedCost : 0;
             document.getElementById('successMessage').textContent = 
@@ -1046,6 +1088,7 @@
             document.getElementById('preferredTime').value = '';
             document.getElementById('notes').value = '';
             document.getElementById('currentMileage').value = '';
+            document.getElementById('regoNumber').value = '';
             document.getElementById('licenseNumber').value = '';
             document.getElementById('licenseFront').value = '';
             document.getElementById('licenseBack').value = '';

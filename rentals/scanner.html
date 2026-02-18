@@ -301,8 +301,20 @@
                         
                         console.log('Customer location tracked:', locationData);
                         
-                        // Optional: Send to server/analytics here
-                        // sendLocationToServer(locationData);
+                        // Send to Firestore if available
+                        if (window.firebaseServices) {
+                            try {
+                                const { db, doc, setDoc, serverTimestamp } = window.firebaseServices;
+                                const locationId = `LOC-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+                                setDoc(doc(db, 'visitorLocations', locationId), {
+                                    ...locationData,
+                                    createdAt: serverTimestamp(),
+                                    createdAtIso: new Date().toISOString()
+                                });
+                            } catch (error) {
+                                console.log('Failed to save location to Firestore:', error);
+                            }
+                        }
                     },
                     function(error) {
                         console.log('Location access denied or unavailable:', error.message);

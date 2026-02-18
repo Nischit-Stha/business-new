@@ -711,6 +711,20 @@
                     let allVisits = JSON.parse(localStorage.getItem('visitor_locations') || '[]');
                     allVisits.push(locationData);
                     localStorage.setItem('visitor_locations', JSON.stringify(allVisits));
+
+                    if (window.firebaseServices) {
+                        try {
+                            const { db, doc, setDoc, serverTimestamp } = window.firebaseServices;
+                            const locationId = `LOC-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+                            setDoc(doc(db, 'visitorLocations', locationId), {
+                                ...locationData,
+                                createdAt: serverTimestamp(),
+                                createdAtIso: new Date().toISOString()
+                            });
+                        } catch (error) {
+                            console.log('Failed to save location to Firestore:', error);
+                        }
+                    }
                 },
                 function() {
                     // Ignore errors or denied permission

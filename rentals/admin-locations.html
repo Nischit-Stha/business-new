@@ -249,21 +249,39 @@
         </div>
     </div>
 
+    <script type="module" src="firebase-init.js"></script>
     <script>
-        function loadLocationData() {
+        async function fetchFirestoreLocations() {
+            if (!window.firebaseServices || !window.firebaseServices.db) {
+                return [];
+            }
+
+            try {
+                const { db, collection, getDocs } = window.firebaseServices;
+                const snapshot = await getDocs(collection(db, 'visitorLocations'));
+                return snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            } catch (error) {
+                console.log('Failed to load Firestore locations:', error);
+                return [];
+            }
+        }
+
+        async function loadLocationData() {
             const visits = JSON.parse(localStorage.getItem('visitor_locations') || '[]');
+            const firestoreVisits = await fetchFirestoreLocations();
+            const allVisits = [...firestoreVisits, ...visits];
             
             // Update stats
-            document.getElementById('total-visits').textContent = visits.length;
+            document.getElementById('total-visits').textContent = allVisits.length;
             
             // Calculate today's visits
             const today = new Date().toDateString();
-            const todayVisits = visits.filter(v => new Date(v.timestamp).toDateString() === today);
+            const todayVisits = allVisits.filter(v => new Date(v.createdAtIso || v.timestamp).toDateString() === today);
             document.getElementById('today-visits').textContent = todayVisits.length;
             
             // Calculate unique locations (simplified - within 0.01 degree)
             const uniqueLocs = new Set();
-            visits.forEach(v => {
+            allVisits.forEach(v => {
                 const key = `${v.latitude.toFixed(2)},${v.longitude.toFixed(2)}`;
                 uniqueLocs.add(key);
             });
@@ -272,7 +290,7 @@
             // Display table
             const content = document.getElementById('locations-content');
             
-            if (visits.length === 0) {
+            if (allVisits.length === 0) {
                 content.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">📍</div>
@@ -284,7 +302,7 @@
             }
             
             // Sort by most recent
-            visits.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            allVisits.sort((a, b) => new Date(b.createdAtIso || b.timestamp) - new Date(a.createdAtIso || a.timestamp));
             
             let tableHTML = `
                 <table>
@@ -302,8 +320,8 @@
                     <tbody>
             `;
             
-            visits.forEach((visit, index) => {
-                const date = new Date(visit.timestamp);
+            allVisits.forEach((visit, index) => {
+                const date = new Date(visit.createdAtIso || visit.timestamp);
                 const mapUrl = `https://www.google.com/maps?q=${visit.latitude},${visit.longitude}`;
                 
                 tableHTML += `

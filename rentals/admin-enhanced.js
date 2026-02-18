@@ -363,9 +363,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up tab navigation
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault();
             const tab = link.getAttribute('data-tab');
-            showTab(tab);
+            // Only prevent default for tab navigation links
+            if (tab) {
+                e.preventDefault();
+                showTab(tab);
+            }
+            // Let other links (scanner.html, admin-locations.html) navigate normally
         });
     });
     

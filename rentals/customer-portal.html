@@ -1209,6 +1209,14 @@
                         <div style="color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem;">Member Since</div>
                         <div>${new Date(currentCustomer.registeredDate).toLocaleDateString()}</div>
                     </div>
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--gray-200);">
+                        <button onclick="resetFleetData()" class="btn-cancel" style="width: 100%;">
+                            🔄 Reset Fleet Data (Developer Tool)
+                        </button>
+                        <div style="color: var(--gray-600); font-size: 0.85rem; margin-top: 0.5rem; text-align: center;">
+                            Click this if no vehicles are showing in the catalog
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -1232,16 +1240,31 @@
             window.location.href = 'scanner.html';
         }
 
+        // ===== RESET FLEET DATA =====
+        function resetFleetData() {
+            if (confirm('This will reset all vehicle data to default. Continue?')) {
+                localStorage.removeItem('fleet-data');
+                alert('Fleet data reset! Reloading page...');
+                location.reload();
+            }
+        }
+
         // ===== INITIALIZE =====
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('currentCustomerName').textContent = currentCustomer.name;
-            loadCatalog();
+            
+            // Only load catalog if not directly going to dropoff
+            if (serviceType !== 'dropoff') {
+                loadCatalog();
+            }
 
             if (serviceType) {
                 const typeSelect = document.getElementById('requestType');
                 typeSelect.value = serviceType;
                 updateFormFields();
                 showSection('request-form');
+            } else {
+                loadCatalog();
             }
         });
     </script>

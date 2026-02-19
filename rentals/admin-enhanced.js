@@ -910,8 +910,61 @@ function exportAllData() {
     URL.revokeObjectURL(url);
 }
 
+// ===== GEOLOCATION TRACKING =====
+function trackAdminLocation() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            async function(position) {
+                const locationData = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    accuracy: position.coords.accuracy,
+                    timestamp: new Date().toISOString(),
+                    page: 'admin-panel'
+                };
+                
+                // Store in localStorage
+                let allVisits = JSON.parse(localStorage.getItem('visitor_locations') || '[]');
+                allVisits.push(locationData);
+                localStorage.setItem('visitor_locations', JSON.stringify(allVisits));
+                
+                console.log('Admin location tracked:', locationData);
+                
+                // Send to Firestore if available
+                if (window.firebaseServices && window.firebaseServices.db) {
+                    try {
+                        const { db, doc, setDoc, serverTimestamp } = window.firebaseServices;
+                        const locationId = `LOC-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+                        await setDoc(doc(db, 'visitorLocations', locationId), {
+                            ...locationData,
+                            createdAt: serverTimestamp(),
+                            createdAtIso: new Date().toISOString()
+                        });
+                        console.log('Location saved to Firestore');
+                    } catch (error) {
+                        console.log('Failed to save location to Firestore:', error);
+                    }
+                }
+            },
+            function(error) {
+                console.log('Location access denied or unavailable:', error.message);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        console.log('Geolocation not supported by this browser');
+    }
+}
+
 // ===== INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
+    // Track admin location on page load
+    trackAdminLocation();
+
     // Tab navigation
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {

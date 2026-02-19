@@ -876,6 +876,15 @@
         // ===== UPDATE FORM FIELDS =====
         function updateFormFields() {
             const type = document.getElementById('requestType').value;
+
+            // Update URL to reflect current request type
+            if (type) {
+                const url = new URL(window.location);
+                url.searchParams.set('type', type);
+                window.history.replaceState({}, '', url);
+                sessionStorage.setItem('serviceType', type);
+            }
+
             const currentVehicleField = document.getElementById('currentVehicleField');
             const selectVehicleField = document.getElementById('selectVehicleField');
             const selectedVehicle = document.getElementById('selectedVehicle');

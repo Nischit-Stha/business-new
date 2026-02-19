@@ -920,7 +920,6 @@
 
             // Show/hide license fields for pickup/drop-off
             const isPickup = type === 'pickup';
-            const isDropoff = type === 'dropoff';
             licenseFields.style.display = (isPickup || isDropoff) ? 'block' : 'none';
             licensePhotos.style.display = isPickup ? 'grid' : 'none';
             contactFields.style.display = isPickup ? 'grid' : 'none';

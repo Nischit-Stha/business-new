@@ -17,7 +17,7 @@ This document outlines the complete Pre-Approval Car Swap & Drop-off Management 
    - Request status tracker
    - Account profile management
 
-2. **Admin Approval Dashboard** (`admin-approvals.html`)
+2. **Admin Approval Dashboard** (`admin.html` - Approvals tab)
    - Pending requests queue
    - Customer & vehicle information
    - Location & time confirmation modal
@@ -53,7 +53,7 @@ Pending → (Admin Review) → Approved → Completed
 ```
 rentals/
 ├── customer-portal.html      # Customer-facing portal
-├── admin-approvals.html      # Admin approval dashboard
+├── admin.html                # Unified admin panel with approval dashboard
 ├── data-system.js            # Backend logic & data models
 ├── scanner.html              # Service entry point (updated)
 ├── index.html                # Admin dashboard (updated)
@@ -203,7 +203,7 @@ rentals/
 
 ### Admin Journey
 1. Admin clicks "Approve Requests" from **index.html** dashboard
-2. Arrives at **admin-approvals.html**
+2. Arrives at **admin.html** (Approvals tab)
 3. Sees list of pending requests with customer info
 4. Reviews request details
 5. Clicks "Approve" on desired request
@@ -288,7 +288,7 @@ Please arrive 10 minutes early.
 - See submitted request with Pending status
 
 **4. Approve Request as Admin**
-- Navigate to `admin-approvals.html`
+- Navigate to `admin.html` and click the Approvals tab
 - See pending request in queue
 - Click "Approve" button
 - Fill in meeting location and time
@@ -309,7 +309,7 @@ Please arrive 10 minutes early.
 ### Navigation
 - **Main Admin Dashboard** (index.html)
 - New button added: "✅ Approve Requests"
-- Links directly to admin-approvals.html
+- Links directly to admin.html#approvals
 
 ### Quick Stats on Approval Dashboard
 - Pending requests count (with badge)
@@ -378,7 +378,7 @@ Potential features for Phase 2:
 
 ### New Files
 - ✅ `customer-portal.html` - 859 lines
-- ✅ `admin-approvals.html` - 730+ lines
+- ✅ `admin.html` - Unified admin panel with _all_ tabs including approvals
 - ✅ `data-system.js` - 500+ lines
 
 ### Updated Files
@@ -429,7 +429,7 @@ All core features are implemented and tested:
 
 For questions about this system, refer to the above sections or check the inline code comments in:
 - `customer-portal.html` - Frontend logic
-- `admin-approvals.html` - Admin workflow
+- `admin.html` (Approvals tab) - Admin approval workflow
 - `data-system.js` - Backend architecture
 
 ---

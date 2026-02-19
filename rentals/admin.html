@@ -5,77 +5,216 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veera Rentals - Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f5f7fa; }
-        .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: white; padding: 1rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #fbbf24;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-400: #cbd5e0;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--dark) 0%, #1e3a8a 100%); min-height: 100vh; color: var(--gray-800); }
+
+        /* ===== HEADER ===== */
+        .header { background: var(--dark); color: white; padding: 1rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 100; }
         .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
-        .logo-section { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .logo-section { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
         .logo { font-size: 2rem; }
         .logo-section h1 { font-family: 'Poppins', sans-serif; font-size: 1.75rem; color: #ffd700; }
-        .nav { display: flex; gap: 0.5rem; margin-top: 1rem; }
-        .nav-link { padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.1); color: white; text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.3s; }
+        .nav { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem; }
+        .nav-link { padding: 0.6rem 1.1rem; background: rgba(255,255,255,0.1); color: white; text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.3s; font-size: 0.9rem; cursor: pointer; border: none; }
         .nav-link:hover { background: rgba(255,215,0,0.2); }
         .nav-link.active { background: #ffd700; color: #1a1a1a; }
-        .main { padding: 2rem 0; }
+        .badge-count { background: var(--danger); color: white; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-left: 0.25rem; }
+
+        /* ===== MAIN ===== */
+        .main { padding: 2rem; max-width: 1400px; margin: 0 auto; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .section-title { font-family: 'Poppins', sans-serif; font-size: 1.75rem; margin-bottom: 1.5rem; color: #1a1a1a; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title { font-family: 'Poppins', sans-serif; font-size: 1.75rem; margin-bottom: 1.5rem; color: white; }
+        .section-subtitle { color: rgba(255,255,255,0.7); margin-bottom: 2rem; font-size: 1rem; }
         .empty-state { text-align: center; padding: 3rem; color: #666; background: white; border-radius: 12px; }
-        .bookings-grid, .inventory-list, .invoices-list { display: grid; gap: 1rem; }
-        .booking-card, .vehicle-card, .invoice-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+        /* ===== CARDS & GRIDS ===== */
+        .bookings-grid, .requests-list { display: grid; gap: 1rem; }
+        .booking-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; }
+        .booking-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
         .booking-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
         .booking-type-badge { background: #ffd700; color: #1a1a1a; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
         .booking-ref { color: #666; font-size: 0.9rem; }
         .booking-details p { margin: 0.5rem 0; color: #333; }
-        .inventory-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .inv-stat { background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .inv-stat h3 { font-size: 2rem; color: #1a1a1a; }
-        .inv-stat.available h3 { color: #10b981; }
-        .inv-stat.rented h3 { color: #ef4444; }
-        .inv-stat.maintenance h3 { color: #f59e0b; }
-        .vehicle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .status-badge { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-        .status-badge.available { background: #d1fae5; color: #065f46; }
-        .status-badge.rented { background: #fee2e2; color: #991b1b; }
-        .status-badge.maintenance { background: #fef3c7; color: #92400e; }
-        .vehicle-details p { margin: 0.5rem 0; color: #666; }
-        .invoice-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .invoice-stats { display: flex; gap: 2rem; }
-        .stat-box { text-align: center; }
-        .stat-box h4 { font-size: 1.5rem; color: #1a1a1a; }
-        .invoice-row { display: flex; justify-content: space-between; align-items: center; }
-        .invoice-amount h3 { color: #10b981; }
-        .invoice-actions { margin-top: 1rem; display: flex; gap: 0.5rem; }
-        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+
+        /* ===== STATS ===== */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .stat-card.success { border-left: 4px solid var(--success); }
+        .stat-card.warning { border-left: 4px solid var(--warning); }
+        .stat-card.danger { border-left: 4px solid var(--danger); }
+        .stat-label { color: var(--gray-600); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .stat-card.success .stat-value { color: var(--success); }
+        .stat-card.warning .stat-value { color: var(--warning); }
+        .stat-card.danger .stat-value { color: var(--danger); }
+        .stat-subtitle { font-size: 0.8rem; color: var(--gray-600); margin-top: 0.25rem; }
+
+        /* ===== INVENTORY ===== */
+        .controls { background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+        .search-box { flex: 1; min-width: 250px; }
+        .search-box input { width: 100%; padding: 0.75rem; border: 2px solid var(--gray-200); border-radius: 6px; font-size: 1rem; }
+        .filter-select { padding: 0.75rem; border: 2px solid var(--gray-200); border-radius: 6px; font-size: 1rem; background: white; cursor: pointer; }
+        .vehicle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .vehicle-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s; }
+        .vehicle-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .vehicle-header-card { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .vehicle-name { font-weight: 700; font-size: 1.1rem; }
+        .vehicle-id-label { font-size: 0.85rem; opacity: 0.9; }
+        .vehicle-body { padding: 1.5rem; }
+        .vehicle-specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        .spec { display: flex; flex-direction: column; }
+        .spec-label { color: var(--gray-600); font-weight: 600; margin-bottom: 0.25rem; }
+        .spec-value { color: var(--dark); font-weight: 700; }
+        .vehicle-price { background: var(--gray-100); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; }
+        .price { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .price-label { color: var(--gray-600); font-size: 0.85rem; }
+        .vehicle-actions { display: flex; gap: 0.5rem; }
+
+        /* ===== APPROVALS ===== */
+        .request-item { background: white; border: 2px solid var(--gray-200); border-radius: 12px; padding: 1.5rem; transition: all 0.3s; }
+        .request-item:hover { border-color: var(--primary-light); box-shadow: 0 8px 20px rgba(59,130,246,0.1); }
+        .request-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .request-id { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+        .request-type-badge { padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: white; }
+        .request-type-badge.pickup { background: #3b82f6; }
+        .request-type-badge.swap { background: #8b5cf6; }
+        .request-type-badge.dropoff { background: #06b6d4; }
+        .customer-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; padding: 1rem 0; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+        .info-block { display: flex; flex-direction: column; }
+        .info-label { color: var(--gray-600); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+        .info-value { color: var(--dark); font-weight: 600; font-size: 0.95rem; }
+        .action-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+
+        /* ===== ANALYTICS ===== */
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .chart-card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .chart-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--dark); }
+        .popular-vehicles, .revenue-breakdown { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .vehicle-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--gray-200); }
+        .vehicle-row:last-child { border-bottom: none; }
+        .v-info { display: flex; flex-direction: column; }
+        .v-name { font-weight: 700; color: var(--dark); margin-bottom: 0.25rem; }
+        .v-category { font-size: 0.85rem; color: var(--gray-600); }
+        .rental-count { background: var(--primary-light); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+        .revenue-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--gray-200); }
+        .revenue-row:last-child { border-bottom: none; }
+        .revenue-label { font-weight: 600; color: var(--dark); }
+        .revenue-value { font-weight: 700; color: var(--success); font-size: 1.1rem; }
+
+        /* ===== LOCATIONS ===== */
+        .locations-table { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--gray-200); font-size: 0.9rem; }
+        th { background: var(--gray-100); font-weight: 600; color: var(--gray-800); }
+        tr:hover { background: var(--gray-100); }
+        .map-link { color: var(--primary); text-decoration: none; font-weight: 500; }
+        .map-link:hover { text-decoration: underline; }
+
+        /* ===== BUTTONS ===== */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
         .btn-primary { background: #ffd700; color: #1a1a1a; }
         .btn-primary:hover { background: #ffed4e; transform: translateY(-2px); }
-        .btn-secondary { background: #e2e8f0; color: #1a1a1a; }
-        .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; }
-        .btn-danger { background: #ef4444; color: white; }
+        .btn-secondary { background: var(--gray-200); color: var(--dark); }
+        .btn-small { padding: 0.5rem 1rem; font-size: 0.85rem; }
+        .btn-add { background: var(--success); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+        .btn-add:hover { background: #059669; }
+        .btn-edit { background: var(--primary-light); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1; padding: 0.6rem; font-size: 0.85rem; }
+        .btn-status-btn { background: var(--warning); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1; padding: 0.6rem; font-size: 0.85rem; }
+        .btn-delete { background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1; padding: 0.6rem; font-size: 0.85rem; }
+        .btn-approve { flex: 1; background: var(--success); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-approve:hover { background: #059669; transform: translateY(-2px); }
+        .btn-deny { flex: 1; background: var(--danger); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-deny:hover { background: #dc2626; transform: translateY(-2px); }
+        .btn-submit { background: var(--success); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-cancel { background: var(--gray-200); color: var(--dark); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* ===== INVOICES ===== */
+        .invoice-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .invoice-stats { display: flex; gap: 2rem; }
+        .stat-box { text-align: center; }
+        .stat-box h4 { font-size: 1.5rem; color: var(--dark); }
+        .invoice-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+        .invoice-row { display: flex; justify-content: space-between; align-items: center; }
+        .invoice-amount h3 { color: var(--success); }
+        .invoice-actions { margin-top: 1rem; display: flex; gap: 0.5rem; }
+
+        /* ===== STATUS BADGES ===== */
+        .status-badge { padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .status-badge.available { background: #d1fae5; color: #065f46; }
+        .status-badge.rented, .status-badge.in-use { background: #fee2e2; color: #991b1b; }
+        .status-badge.maintenance { background: #fef3c7; color: #92400e; }
+        .status-badge.paid { background: #d1fae5; color: #065f46; }
+        .status-badge.unpaid { background: #fee2e2; color: #991b1b; }
+
+        /* ===== REPORTS ===== */
         .reports-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         .report-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .report-stats p { margin: 0.75rem 0; color: #333; }
-        .export-section { text-align: center; }
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .export-section { text-align: center; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        /* ===== MODALS ===== */
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 16px; max-width: 500px; width: 90%; }
+        .modal-content { background: white; padding: 2rem; border-radius: 16px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative; }
+        .modal-content.wide { max-width: 800px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .close-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: #666; }
+        .modal-header h2 { font-size: 1.4rem; color: var(--dark); }
+        .close-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: #666; line-height: 1; }
         .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; }
-        #customer-profile-modal .modal-content { max-width: 800px; max-height: 90vh; overflow-y: auto; }
-        .profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
-        .profile-section { margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; }
-        .profile-section h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: #1a1a1a; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 2px solid var(--gray-200); border-radius: 8px; font-size: 1rem; font-family: 'Inter', sans-serif; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-light); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+        /* ===== PROFILE MODAL ===== */
+        .profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 1rem; }
+        .profile-section { margin-bottom: 1.5rem; padding: 1rem; background: var(--gray-100); border-radius: 8px; }
+        .profile-section h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--dark); }
         .profile-section p { margin: 0.5rem 0; color: #333; }
         .license-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem; }
         .license-photo { text-align: center; }
         .license-photo h4 { font-size: 0.9rem; margin-bottom: 0.5rem; color: #666; }
-        .license-image { width: 100%; max-width: 350px; height: auto; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .booking-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s; }
+        .license-image { width: 100%; max-width: 350px; height: auto; border: 2px solid var(--gray-200); border-radius: 8px; margin-bottom: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav { gap: 0.25rem; }
+            .nav-link { padding: 0.5rem 0.75rem; font-size: 0.8rem; }
+            .main { padding: 1rem; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .vehicle-grid { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; }
+            .search-box { min-width: unset; }
+            .action-buttons { flex-direction: column; }
+            .customer-info { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -85,66 +224,259 @@
                 <div class="logo">🚗</div>
                 <div>
                     <h1>Veera Rentals Admin</h1>
-                    <p style="color: #ffd700; font-size: 0.9rem;">Professional Fleet Management</p>
+                    <p style="color: #ffd700; font-size: 0.85rem;">Professional Fleet Management</p>
                 </div>
             </div>
             <nav class="nav">
-                <a href="#dashboard" class="nav-link active" data-tab="dashboard">Dashboard</a>
-                <a href="#bookings" class="nav-link" data-tab="bookings">Bookings</a>
-                <a href="#inventory" class="nav-link" data-tab="inventory">Inventory</a>
-                <a href="#invoices" class="nav-link" data-tab="invoices">Invoices</a>
-                <a href="#reports" class="nav-link" data-tab="reports">Reports</a>
-                <a href="admin-locations.html" style="padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.1); color: white; text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.3s; display: inline-block;">📍 Locations</a>
-                <a href="scanner.html" style="padding: 0.75rem 1.5rem; background: rgba(255,215,0,0.3); border: 2px solid #ffd700; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.3s; display: inline-block;">👁️ See Customer View</a>
+                <a href="#dashboard" class="nav-link active" data-tab="dashboard">📊 Dashboard</a>
+                <a href="#bookings" class="nav-link" data-tab="bookings">📋 Bookings</a>
+                <a href="#approvals" class="nav-link" data-tab="approvals">✅ Approvals <span class="badge-count" id="pending-badge">0</span></a>
+                <a href="#inventory" class="nav-link" data-tab="inventory">🚗 Inventory</a>
+                <a href="#analytics" class="nav-link" data-tab="analytics">📈 Analytics</a>
+                <a href="#locations" class="nav-link" data-tab="locations">📍 Locations</a>
+                <a href="#invoices" class="nav-link" data-tab="invoices">💰 Invoices</a>
+                <a href="#reports" class="nav-link" data-tab="reports">📝 Reports</a>
+                <a href="scanner.html" class="nav-link" style="background: rgba(255,215,0,0.3); border: 2px solid #ffd700;">👁️ Customer View</a>
             </nav>
         </div>
     </header>
 
     <main class="main">
-        <div class="container">
-            <!-- Dashboard Section -->
-            <section id="dashboard-section" class="tab-content active">
-                <h2 class="section-title">Dashboard</h2>
-                <p>Welcome to Veera Rentals Admin Panel. Select a section from the navigation above.</p>
-            </section>
+        <!-- ===== DASHBOARD ===== -->
+        <section id="dashboard-section" class="tab-content active">
+            <h2 class="section-title">📊 Dashboard</h2>
+            <div class="stats-grid" id="dashboard-stats"></div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">Request Status Distribution</div>
+                    <canvas id="dashRequestChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Fleet Status</div>
+                    <canvas id="dashFleetChart"></canvas>
+                </div>
+            </div>
+        </section>
 
-            <!-- Bookings Section -->
-            <section id="bookings-section" class="tab-content">
-                <h2 class="section-title">All Bookings</h2>
-                <div id="bookings-grid" class="bookings-grid"></div>
-            </section>
+        <!-- ===== BOOKINGS ===== -->
+        <section id="bookings-section" class="tab-content">
+            <h2 class="section-title">📋 All Bookings</h2>
+            <div id="bookings-grid" class="bookings-grid"></div>
+        </section>
 
-            <!-- Inventory Section -->
-            <section id="inventory-section" class="tab-content">
-                <h2 class="section-title">Fleet Inventory</h2>
-                <div id="inventory-grid"></div>
-            </section>
+        <!-- ===== APPROVALS ===== -->
+        <section id="approvals-section" class="tab-content">
+            <h2 class="section-title">✅ Request Approvals</h2>
+            <p class="section-subtitle">Review and approve pending customer requests</p>
+            <div class="stats-grid" id="approval-stats"></div>
+            <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.3rem; color: var(--dark); margin-bottom: 1.5rem;">⏳ Pending Requests Queue</h3>
+                <div class="requests-list" id="requests-queue"></div>
+            </div>
+        </section>
 
-            <!-- Invoices Section -->
-            <section id="invoices-section" class="tab-content">
-                <h2 class="section-title">Invoices & Payments</h2>
-                <div id="invoices-grid"></div>
-            </section>
+        <!-- ===== INVENTORY ===== -->
+        <section id="inventory-section" class="tab-content">
+            <h2 class="section-title">🚗 Vehicle Inventory</h2>
+            <p class="section-subtitle">Manage your fleet — add, edit, and monitor vehicle status</p>
+            <div class="controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search by make, model, or rego...">
+                </div>
+                <select id="filterStatus" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="available">Available</option>
+                    <option value="in-use">In Use</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="reserved">Reserved</option>
+                </select>
+                <select id="filterCategory" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="Economy">Economy</option>
+                    <option value="Compact">Compact</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Luxury">Luxury</option>
+                    <option value="Van">Van</option>
+                    <option value="Truck">Truck</option>
+                </select>
+                <button class="btn-add" onclick="openAddVehicleModal()">+ Add Vehicle</button>
+            </div>
+            <div class="vehicle-grid" id="vehicleGrid"></div>
+        </section>
 
-            <!-- Reports Section -->
-            <section id="reports-section" class="tab-content">
-                <h2 class="section-title">Reports & Analytics</h2>
-                <div id="reports-content"></div>
-            </section>
-        </div>
+        <!-- ===== ANALYTICS ===== -->
+        <section id="analytics-section" class="tab-content">
+            <h2 class="section-title">📈 Analytics Dashboard</h2>
+            <p class="section-subtitle">Real-time metrics and business insights</p>
+            <div class="stats-grid" id="analytics-metrics"></div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-title">Request Status Distribution</div>
+                    <canvas id="requestChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Fleet Status</div>
+                    <canvas id="fleetChart"></canvas>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="popular-vehicles">
+                    <div class="chart-title">🏆 Most Popular Vehicles</div>
+                    <div id="popularVehicles"></div>
+                </div>
+                <div class="revenue-breakdown">
+                    <div class="chart-title">💰 Revenue Breakdown</div>
+                    <div id="revenueBreakdown"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== LOCATIONS ===== -->
+        <section id="locations-section" class="tab-content">
+            <h2 class="section-title">📍 Customer Locations</h2>
+            <p class="section-subtitle">Track where customers are accessing your rental service from</p>
+            <div class="stats-grid" id="location-stats"></div>
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="loadLocationData()">🔄 Refresh</button>
+                <button class="btn btn-primary" onclick="exportLocationCSV()">📥 Export CSV</button>
+                <button class="btn btn-danger" onclick="clearLocationData()">🗑️ Clear Data</button>
+            </div>
+            <div class="locations-table">
+                <h3 style="margin-bottom: 1rem;">Visitor Locations</h3>
+                <div id="locations-content"></div>
+            </div>
+        </section>
+
+        <!-- ===== INVOICES ===== -->
+        <section id="invoices-section" class="tab-content">
+            <h2 class="section-title">💰 Invoices & Payments</h2>
+            <div id="invoices-grid"></div>
+        </section>
+
+        <!-- ===== REPORTS ===== -->
+        <section id="reports-section" class="tab-content">
+            <h2 class="section-title">📝 Reports & Analytics</h2>
+            <div id="reports-content"></div>
+        </section>
     </main>
 
-    <!-- Customer Profile Modal -->
+    <!-- ===== CUSTOMER PROFILE MODAL ===== -->
     <div id="customer-profile-modal" class="modal">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                <button class="close-btn" onclick="closeCustomerProfile()">×</button>
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h2>👤 Customer Profile</h2>
+                <button class="close-btn" onclick="closeCustomerProfile()">&times;</button>
             </div>
             <div id="customer-profile-content"></div>
         </div>
     </div>
 
+    <!-- ===== APPROVAL MODAL ===== -->
+    <div id="approvalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✅ Approve Request</h2>
+                <button class="close-btn" onclick="closeApprovalModal()">&times;</button>
+            </div>
+            <form onsubmit="submitApproval(event)">
+                <div class="form-group">
+                    <label>Customer</label>
+                    <input type="text" id="approvalCustomerName" readonly style="background: var(--gray-100); cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Meeting Location *</label>
+                    <input type="text" id="approvalLocation" placeholder="e.g., 123 Main St, Downtown Office" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Meeting Date *</label>
+                        <input type="date" id="approvalDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Meeting Time *</label>
+                        <input type="time" id="approvalTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea id="approvalNotes" placeholder="Any special instructions..." rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeApprovalModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Approve Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== ADD/EDIT VEHICLE MODAL ===== -->
+    <div id="vehicleModal" class="modal">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h2 id="vehicleModalTitle">Add New Vehicle</h2>
+                <button class="close-btn" onclick="closeVehicleModal()">&times;</button>
+            </div>
+            <form onsubmit="saveVehicle(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label>Make *</label><input type="text" id="formMake" required></div>
+                    <div class="form-group"><label>Model *</label><input type="text" id="formModel" required></div>
+                    <div class="form-group"><label>Year *</label><input type="number" id="formYear" min="2000" max="2030" required></div>
+                    <div class="form-group"><label>Rego *</label><input type="text" id="formRego" required></div>
+                    <div class="form-group"><label>Category *</label>
+                        <select id="formCategory" required>
+                            <option value="">Select...</option>
+                            <option value="Economy">Economy</option><option value="Compact">Compact</option>
+                            <option value="Sedan">Sedan</option><option value="SUV">SUV</option>
+                            <option value="Luxury">Luxury</option><option value="Van">Van</option><option value="Truck">Truck</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Transmission *</label>
+                        <select id="formTransmission" required><option value="Automatic">Automatic</option><option value="Manual">Manual</option><option value="CVT">CVT</option></select>
+                    </div>
+                    <div class="form-group"><label>Fuel Type *</label><input type="text" id="formFuel" placeholder="Petrol, Hybrid, Electric" required></div>
+                    <div class="form-group"><label>Range (km) *</label><input type="text" id="formRange" placeholder="e.g., 600 km" required></div>
+                    <div class="form-group"><label>Color *</label><input type="text" id="formColor" required></div>
+                    <div class="form-group"><label>Mileage *</label><input type="number" id="formMileage" min="0" required></div>
+                    <div class="form-group"><label>Daily Rate ($) *</label><input type="number" id="formDailyRate" min="0" step="0.01" required></div>
+                    <div class="form-group"><label>Seats *</label><input type="number" id="formSeats" min="1" max="8" required></div>
+                    <div class="form-group"><label>Trunk Space (L)</label><input type="text" id="formTrunk" placeholder="e.g., 500L"></div>
+                </div>
+                <div class="form-group"><label>Description</label><input type="text" id="formDescription" placeholder="Premium sedan with luxury features"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeVehicleModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Save Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== STATUS CHANGE MODAL ===== -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Change Vehicle Status</h2>
+                <button class="close-btn" onclick="closeStatusModal()">&times;</button>
+            </div>
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label>New Status</label>
+                <select id="newStatus" class="filter-select" style="width: 100%;">
+                    <option value="available">Available</option>
+                    <option value="in-use">In Use</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="reserved">Reserved</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeStatusModal()">Cancel</button>
+                <button class="btn-submit" onclick="updateVehicleStatusAction()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="firebase-init.js"></script>
+    <script src="data-system-enhanced.js"></script>
+    <script src="auth-system.js"></script>
     <script src="admin-enhanced.js"></script>
 </body>
 </html>

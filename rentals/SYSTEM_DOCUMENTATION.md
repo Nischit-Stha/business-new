@@ -49,14 +49,14 @@ A comprehensive, production-ready car rental management system with customer por
   - Fleet utilization metrics
   - Quick actions
 
-- **Inventory Management** (`admin-inventory.html`)
+- **Inventory Management** (in `admin.html`, Inventory tab)
   - Full CRUD operations for vehicles
   - Search and filter capabilities
   - Status management (Available, Rented, Maintenance)
   - Category organization
   - Vehicle details editing
 
-- **Analytics Dashboard** (`admin-analytics.html`)
+- **Analytics Dashboard** (in `admin.html`, Analytics tab)
   - Real-time charts (Chart.js integration)
   - Revenue statistics
   - Request status distribution
@@ -87,9 +87,9 @@ rentals/
 │
 ├── Admin Portal
 │   ├── index.html                # Admin dashboard
-│   ├── admin-inventory.html      # Vehicle management
-│   ├── admin-analytics.html      # Analytics & reports
-│   └── admin-approvals.html      # Booking approvals
+│   ├── admin.html                # Unified admin panel
+│   ├── admin-login.html          # Admin login gate
+│   └── admin-enhanced.js         # Admin panel JavaScript
 │
 ├── Data & Systems
 │   ├── data-system-enhanced.js   # Complete backend system

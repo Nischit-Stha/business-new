@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veera Rentals - Navigation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #ffd700;
+            --dark: #0f172a;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-600: #475569;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .lock-screen, .nav-screen {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .nav-screen {
+            max-width: 800px;
+            display: none;
+        }
+
+        .nav-screen.active {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-name {
+            color: var(--accent);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .password-form {
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn:hover {
+            background: #ffed4e;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255,215,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .error-msg {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .error-msg.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .nav-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(59,130,246,0.4);
+        }
+
+        .nav-icon {
+            font-size: 2.5rem;
+        }
+
+        .nav-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav-desc {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        .nav-card.admin {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        }
+
+        .nav-card.customer {
+            background: linear-gradient(135deg, #059669 0%, var(--success) 100%);
+        }
+
+        .nav-card.auth {
+            background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+        }
+
+        .nav-card.doc {
+            background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%);
+        }
+
+        .logout-btn {
+            margin-top: 2rem;
+            background: var(--gray-200);
+            color: var(--dark);
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: auto;
+        }
+
+        .logout-btn:hover {
+            background: var(--gray-600);
+            color: white;
+        }
+
+        .hint {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #fef3c7;
+            color: #92400e;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 1rem;
+            }
+
+            .lock-screen, .nav-screen {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Lock Screen -->
+    <div class="lock-screen" id="lockScreen">
+        <div class="logo">🚗</div>
+        <h1><span class="brand-name">Veera Rentals</span></h1>
+        <p class="subtitle">Navigation Hub</p>
+        <div class="lock-icon">🔒</div>
+        <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Enter password to access the system</p>
+        
+        <form class="password-form" onsubmit="checkPassword(event)">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password" required autofocus>
+            </div>
+            <button type="submit" class="btn">🔓 Unlock Access</button>
+        </form>
+        
+        <div id="errorMsg" class="error-msg">❌ Incorrect password. Please try again.</div>
+        
+        <div class="hint">
+            💡 <strong>Hint:</strong> Default password is <code style="background: white; padding: 0.2rem 0.5rem; border-radius: 4px;">veera2026</code>
+        </div>
+    </div>
+
+    <!-- Navigation Screen -->
+    <div class="nav-screen" id="navScreen">
+        <div class="logo">🚗</div>
+        <h1><span class="brand-name">Veera Rentals</span> System</h1>
+        <p class="subtitle">Select a page to navigate</p>
+
+        <div class="nav-grid">
+            <!-- Customer Pages -->
+            <a href="scanner.html" class="nav-card customer">
+                <div class="nav-icon">📱</div>
+                <div class="nav-title">QR Scanner</div>
+                <div class="nav-desc">Scan QR codes</div>
+            </a>
+
+            <a href="customer-portal.html" class="nav-card customer">
+                <div class="nav-icon">👤</div>
+                <div class="nav-title">Customer Portal</div>
+                <div class="nav-desc">Rental requests</div>
+            </a>
+
+            <a href="service.html" class="nav-card customer">
+                <div class="nav-icon">🔧</div>
+                <div class="nav-title">Service Page</div>
+                <div class="nav-desc">Vehicle service</div>
+            </a>
+
+            <a href="payment.html" class="nav-card customer">
+                <div class="nav-icon">💳</div>
+                <div class="nav-title">Payment</div>
+                <div class="nav-desc">Process payments</div>
+            </a>
+
+            <a href="payment-success.html" class="nav-card customer">
+                <div class="nav-icon">✅</div>
+                <div class="nav-title">Payment Success</div>
+                <div class="nav-desc">Confirmation page</div>
+            </a>
+
+            <!-- Admin Pages -->
+            <a href="admin-login.html" class="nav-card admin">
+                <div class="nav-icon">🔐</div>
+                <div class="nav-title">Admin Login</div>
+                <div class="nav-desc">Admin access</div>
+            </a>
+
+            <a href="admin.html" class="nav-card admin">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-title">Admin Panel</div>
+                <div class="nav-desc">Full dashboard</div>
+            </a>
+
+            <!-- Auth Pages -->
+            <a href="login.html" class="nav-card auth">
+                <div class="nav-icon">🔑</div>
+                <div class="nav-title">Login</div>
+                <div class="nav-desc">User login</div>
+            </a>
+
+            <a href="register.html" class="nav-card auth">
+                <div class="nav-icon">📝</div>
+                <div class="nav-title">Register</div>
+                <div class="nav-desc">Create account</div>
+            </a>
+
+            <!-- Documents -->
+            <a href="terms.pdf" class="nav-card doc" target="_blank">
+                <div class="nav-icon">📄</div>
+                <div class="nav-title">Terms & Conditions</div>
+                <div class="nav-desc">PDF document</div>
+            </a>
+
+            <a href="README.md" class="nav-card doc" target="_blank">
+                <div class="nav-icon">📖</div>
+                <div class="nav-title">README</div>
+                <div class="nav-desc">Documentation</div>
+            </a>
+
+            <a href="SYSTEM_DOCUMENTATION.md" class="nav-card doc" target="_blank">
+                <div class="nav-icon">📋</div>
+                <div class="nav-title">System Docs</div>
+                <div class="nav-desc">Technical guide</div>
+            </a>
+        </div>
+
+        <button class="logout-btn" onclick="logout()">🔒 Lock Access</button>
+    </div>
+
+    <script>
+        // Password check
+        const CORRECT_PASSWORD = 'veera2026';
+
+        // Check if already authenticated
+        if (sessionStorage.getItem('navAuth') === 'true') {
+            showNavScreen();
+        }
+
+        function checkPassword(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (password === CORRECT_PASSWORD) {
+                sessionStorage.setItem('navAuth', 'true');
+                showNavScreen();
+            } else {
+                errorMsg.classList.add('show');
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+
+                setTimeout(() => {
+                    errorMsg.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function showNavScreen() {
+            document.getElementById('lockScreen').style.display = 'none';
+            document.getElementById('navScreen').classList.add('active');
+        }
+
+        function logout() {
+            sessionStorage.removeItem('navAuth');
+            location.reload();
+        }
+
+        // Clear password field on page load
+        document.getElementById('password').value = '';
+    </script>
+</body>
+</html>

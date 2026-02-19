@@ -571,7 +571,7 @@ Request ID: ${request.id.substring(0, 12)}
 Reason: ${request.denyReason || 'Not available for selected date'}
 
 Please contact our support team to discuss alternatives:
-📞 1-800-STARR-365
+📞 1-800-VEERA-GO
 📧 support@veerarentals.com
 
 Best regards,

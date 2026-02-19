@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Premium Car Rentals</title>
+    <title>Admin Login - Veera Rentals</title>
     <style>
         * {
             margin: 0;
@@ -270,7 +270,7 @@
     <script>
         // Check if already logged in
         if (authSystem.isAdminAuthenticated()) {
-            window.location.href = 'index.html';
+            window.location.href = 'admin.html';
         }
 
         // Toggle password visibility
@@ -311,7 +311,7 @@
             if (result.success) {
                 showAlert('Login successful! Redirecting...', 'success');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'admin.html';
                 }, 1000);
             } else {
                 showAlert(result.message);

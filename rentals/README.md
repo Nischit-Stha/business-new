@@ -1,4 +1,4 @@
-# 🚗 Premium Car Rentals - Complete Management System
+# ⭐ Veera Rentals - Complete Management System
 
 ## Overview
 A comprehensive, production-ready car rental management system with customer authentication, payment processing, admin dashboards, and real-time analytics.
@@ -340,6 +340,6 @@ This project demonstrates:
 
 ---
 
-**Premium Car Rentals Management System v2.0**  
+**Veera Rentals Management System v2.0**  
 *Production-Ready Demo • February 2026*  
 *Complete with Authentication, Payments, Analytics & More*

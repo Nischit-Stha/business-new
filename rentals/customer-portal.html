@@ -843,12 +843,13 @@
 
         // ===== SELECT CAR =====
         function selectCar(vehicleId) {
-            // Set request type to pickup if not set
+            // Set request type to pickup
             const typeSelect = document.getElementById('requestType');
             if (!typeSelect.value) {
                 typeSelect.value = 'pickup';
-                updateFormFields();
             }
+            // Always update form fields to ensure correct fields are shown
+            updateFormFields();
 
             // Update selected vehicle
             document.getElementById('selectedVehicle').value = vehicleId;

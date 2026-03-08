@@ -1310,6 +1310,11 @@
             } else {
                 loadCatalog();
             }
+
+            // Add event listeners for cost calculation
+            document.getElementById('selectedVehicle').addEventListener('change', calculateCost);
+            document.getElementById('preferredDate').addEventListener('change', calculateCost);
+            document.getElementById('preferredTime').addEventListener('change', calculateCost);
         });
     </script>
 </body>

@@ -383,7 +383,7 @@
 
         function checkPassword(e) {
             e.preventDefault();
-            const password = document.getElementById('password').value;
+            const password = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('errorMsg');
 
             if (password === CORRECT_PASSWORD) {

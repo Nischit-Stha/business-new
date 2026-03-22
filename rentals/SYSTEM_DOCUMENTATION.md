@@ -112,11 +112,11 @@ All 15 pre-loaded customers use password: `password123`
 ### Admin Accounts
 **Superadmin:**
 - Username: `admin`
-- Password: `admin123`
+- Password: `veera2026`
 
 **Manager:**
 - Username: `manager`
-- Password: `manager123`
+- Password: `veera2026`
 
 ### Security Features
 - Password validation (minimum 6 characters)

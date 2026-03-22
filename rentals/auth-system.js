@@ -93,8 +93,8 @@ class AuthenticationSystem {
     adminLogin(username, password) {
         // Simple admin credentials (in production, use proper backend authentication)
         const adminCredentials = [
-            { username: 'admin', password: 'admin123', role: 'superadmin', name: 'Admin User' },
-            { username: 'manager', password: 'manager123', role: 'manager', name: 'Manager User' }
+            { username: 'admin', password: 'veera2026', role: 'superadmin', name: 'Admin User' },
+            { username: 'manager', password: 'veera2026', role: 'manager', name: 'Manager User' }
         ];
 
         const admin = adminCredentials.find(a => a.username === username && a.password === password);

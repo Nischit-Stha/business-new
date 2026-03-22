@@ -151,7 +151,7 @@ Upload all files to your hosting:
 
 **Demo Admin:**
 - Username: `admin`
-- Password: `admin123`
+- Password: `veera2026`
 
 ## 📂 File Structure
 
